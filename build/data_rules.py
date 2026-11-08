@@ -17,17 +17,17 @@ GOLDEN_RULES = [
     {"e": "🌡️", "t": "Follow the 3-3-3 clock",
      "d": "Shelter dogs use roughly 3 days to decompress, 3 weeks to learn routines, and 3 months to fully belong. And some dogs need longer — no comparing, no rushing. Decompression comes before training."},
     {"e": "🍖", "t": "Food is currency, not bribery",
-     "d": "Hand-feed and scatter-feed the first weeks (you become good news), pay pea-sized treats for work, and save the fancy stuff (cheese, chicken) for big moments. Treats stay under about 10% of daily food."},
+     "d": "Hand-feed and scatter-feed the first weeks (you become good news), pay pea-sized treats for work, and save the fancy stuff (cheese, chicken) for big moments. Treats stay under about 10% of daily calories."},
     {"e": "👀", "t": "Read body language first",
      "d": "Lip licking, yawning, whale eye, tucked tails are polite 'no thanks' signals; growling and snapping are the last-resort system. See a stress tell? Lower the pressure and add space — that's behavior prevention."},
     {"e": "💛", "t": "Consent beats handling",
-     "d": "Petting, grooming, vet care — everything works better when the dog can say 'not yet' (chin lifts = pause). Dogs who trust their 'no' are calmer, safer and easier to handle for life."},
+     "d": "Petting, grooming, vet care — everything works better when the dog can say 'not yet' (chin lifts = pause). Dogs who can say no are often calmer and easier to handle."},
 ]
 
 DONT_LIST = [
     "🚫 Don't punish accidents or toilet mistakes — it teaches dogs to hide, not hold it.",
-    "🐺 No alpha-rolls, dominance or 'pack owner' games — packs are families, not military. Force methods measurably increase fear and aggression (AVSAB).",
-    "🏞️ No dog parks, crowds or pet stores in the first weeks — being flooded with scary things teaches fear, and fear grows barking and snapping later.",
+    "🐺 No alpha-rolls, dominance or 'pack owner' games — dominance-based methods are outdated and can increase fear and aggression (AVSAB).",
+    "🏞️ No dog parks, crowds or pet stores in the first weeks — being flooded with scary things can increase fear, and fear is one route to barking and snapping later.",
     "🤲 No forced greetings or hugs — let your dog choose to approach, every time.",
     "🍲 Don't hover over food bowls or take bones away quietly — trade instead of robbing; guarding grows from grabby hands.",
     "🖐️ Don't grab a scared dog's collar — it makes collar-touch the enemy right when you need it at the vet.",
@@ -39,7 +39,7 @@ DONT_LIST = [
 
 STRESS_SIGNALS = [
     "Lip licking or tongue flicks (not eating)",
-    "Yawning or sniffing the ground (blinking out of context)",
+    "Yawning, ground-sniffing, or blinking out of context (especially with a stiff body)",
     "Whale eye — whites of the eyes showing",
     "Ears pinned back or stiff high-held head",
     "Tucked or frozen-low tail",
@@ -60,7 +60,7 @@ HAPPY_SIGNALS = [
     "Solicits contact — leans in or nudges",
 ]
 
-HOUSE_RULE = "One stress signal = lower the pressure. Two together = stop what you're doing and give space. That's it — it's the whole trick."
+HOUSE_RULE = "One clear stress signal = lower the pressure and add space. Several together, or one with a stiff or frozen body = stop. Read the whole body, not a single tell."
 
 GEAR = [
     "A well-fitted harness or flat collar (never prong, choke or shock)",
@@ -102,7 +102,7 @@ LEARN = [
 
 HOW_IT_WORKS = [
     {"e": "🏡", "t": "Start at Stage 1 — even if you've had dogs before",
-     "d": "Shelter dogs need the decompression weeks first: safe space, sleep, routine. Skipping to 'fetch tricks' is how nervous dogs turn into nippy dogs."},
+     "d": "Shelter dogs need the decompression weeks first: safe space, sleep, routine. Skipping decompression can make a nervous dog more reactive; start with safety and routine."},
     {"e": "🐾", "t": "One exercise at a time, a few minutes",
      "d": "Do today's focus exercise, tick the steps as you go, and check the Mastery criteria. When it's solid, mark it mastered and celebrate — small wins stack."},
     {"e": "🧰", "t": "Stuck? Every exercise has a safety net",

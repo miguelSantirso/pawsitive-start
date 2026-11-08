@@ -20,17 +20,17 @@ STAGE = {
             "time": "5 minutes × 3 a week",
             "goal": "From 20+ feet outdoors, on one call, your dog turns and comes straight back to you.",
             "why": "Outdoor recall is the rescue life-saver — and freedom is earned on a long line first, never by "
-                   "gambling. One poisoned recall ('come' ended the fun) costs weeks of trust, so the promise "
-                   "stays: come = jackpot, every time, forever.",
-            "need": ["A 15–30 ft long line", "Their all-time favorite treat (cheese, chicken...)", "A quiet field or yard", "A long-lasting toy for some recalls"],
+                   "gambling. One bad recall is a setback, not a reset; keep the pay generous and the promise "
+                   "strong: come = a big reward.",
+            "need": ["A 15–30 ft long line clipped to a well-fitted harness", "Their all-time favorite treat (cheese, chicken...)", "A quiet field or yard", "A long-lasting toy for some recalls"],
             "steps": [
-                "Clip the long line in a quiet area and let them wander a few feet.",
+                "Clip the long line to a well-fitted harness (never a flat collar) in a quiet area and let them wander a few feet.",
                 "Say 'Name! Come!' once, crouch, and run backwards two or three steps — the running-away dog is far more interesting than the calling dog.",
                 "On arrival: 'Yes!' then the full jackpot (ten tiny treats tossed to graze) or a toy game. Vary it — sometimes food, sometimes play, sometimes release right back to sniffing ('go sniff!' as a reward too).",
-                "Call when they're mid-sniff a few feet away: pay huge. If they don't come, quietly take up the line and reset at a shorter distance — no third calls, ever.",
+                "Call when they're mid-sniff a few feet away: pay huge. If they don't come, quietly take up the line and reset at a shorter distance — no second call.",
                 "Grow distance as the success rate holds: 10 ft → 20 ft → 30 ft, indoors→garden→field.",
                 "Never call to end something great — call, pay, then release them back to it. Recall shouldn't end life's best moments.",
-                "Proof it: a friend stands at 30 feet eating sandwich, other dogs visible 50 feet off — call once, pay generous arrivals. Freedom always begins below these thresholds.",
+                "Proof it: a friend stands at 30 feet eating a sandwich, other dogs visible 50 feet off — call once, pay generous arrivals. Freedom always begins below these thresholds.",
             ],
             "criteria": [
                 "9 out of 10 recalls at 20 feet with mild distractions, arriving fast and happy.",
@@ -55,15 +55,15 @@ STAGE = {
             "time": "2 minutes × 2 a day",
             "goal": "One full circle on cue — the confidence trick that teaches 'learning with you is the fun part'.",
             "why": "After weeks of careful rescue-building, tricks are where dogs find out that training is play. "
-                   "Spinning builds body awareness and optimism, and gives nervous dogs a friendly, rehearsed "
-                   "job to do in awkward moments (guest arrival, vet waiting room).",
+                   "Spinning builds body awareness and gives the dog a fun job, and gives nervous dogs a friendly, "
+                   "rehearsed job to do in awkward moments (guest arrival, vet waiting room).",
             "need": ["Treats", "A clear floor spot", "Two minutes of positive mood (yours and theirs)"],
             "steps": [
                 "Hold a treat at nose height and lure a small, tight circle around their own body.",
                 "Mark the halfway point ('Yes!', treat), then on a later rep mark the full circle and treat — jackpot it.",
                 "When the circle is smooth, try the same motion with an empty hand — mark and pay from the other hand.",
                 "Add the cue 'spin' as the gesture matures; keep the hand sweep, smaller and smaller.",
-                "Keep it one direction for a while; the other direction is a different trick and an own cue later.",
+                "Keep it one direction for a while; the other direction is a different trick and gets its own cue later.",
                 "Two or three reps per session max. Tricks end while they're still having fun.",
             ],
             "criteria": [
@@ -88,7 +88,7 @@ STAGE = {
             "emoji": "🖐️",
             "time": "2 minutes × 2 a day",
             "goal": "Their paw lands on your open palm on cue — the polite 'job' for greetings.",
-            "why": "High five pairs paw-touch with good things (it helps Stage 5 handling), and gives excitable dogs "
+            "why": "High five pairs paw-touch with good things, and gives excitable dogs "
                    "a rehearsed 'polite job' when guests arrive instead of jumping. Two-syllable plus paw = the "
                    "trick every guest remembers.",
             "need": ["Treats in a closed fist", "A sit cue they know"],
@@ -123,7 +123,7 @@ STAGE = {
             "emoji": "🚪",
             "time": "Rehearse 5–10 minutes weekly",
             "goal": "Knock → they go to the mat → they stay until released → they greet with four feet on the floor.",
-            "why": "Excited greeting moments are where escapes, toppling grandmas and 'good luck with the new "
+            "why": "Excited greeting moments are where escapes, bites and 'good luck with the new "
                    "dog' stories get made. A rehearsed arrival ritual protects everyone — and it's the "
                    "home version of the Canine Good Citizen 'friendly stranger' item.",
             "need": ["A helper", "Their mat from Stage 3", "Treats", "A gate for real deliveries meanwhile"],
@@ -131,17 +131,17 @@ STAGE = {
                 "Rehearse the sequence without a guest first: you knock loudly yourself, dog to mat, mark and treat.",
                 "Next: helper knocks; helper STAYS outside until the dog is settled on the mat.",
                 "Door opens; dog stays on the mat; helper walks in and ignores the dog COMPLETELY for about 10 seconds.",
-                "Release word ('go say hi'); the helper drops to their level and offers a hand to sniff — no overhead hands, no hugs.",
+                "Release word ('go say hi'); the helper stands sideways and lets the dog approach — no leaning over, no face-to-face, no overhead hands.",
                 "If they jump: helper turns silently away, and send them back to the mat. No shouting, no grabbing.",
                 "Repeat with different helpers over a few weeks — same ritual, calmer dog, every time.",
                 "Real deliveries meanwhile get the gate: management while the ritual solidifies.",
             ],
             "criteria": [
                 "They trot to their mat at the sound of the knock.",
-                "They stay until released, and greet without jumping — even with a shiny-new-person arriving.",
+                "They stay until released, and greet without jumping — even with a new person arriving.",
             ],
             "mistakes": [
-                "Never collar-grab at the door — grabbing dogs means excitement; use the ritual + the gate.",
+                "Never collar-grab at the door — grabbing an excited dog can turn excitement into fear or a bite; use the ritual + the gate.",
                 "Don't let guests reward jumping with attention ('no, but I LOVE dogs!') — every guest follows the ignore-until-released rule.",
                 "Don't skip the rehearsal — real guests are exam day, not the class.",
             ],
@@ -149,7 +149,7 @@ STAGE = {
                 {"q": "They ignore the mat completely when the doorbell rings.",
                  "a": "Dial it back: ring a quiet recording of the bell, feed at the mat, repeat a dozen calm times from the hallway to the door. Real bell = too thrilling to learn at first."},
                 {"q": "Guests keep sneaking pets anyway.",
-                 "a": "Post a small sign by the door while training — 'Dog in training: I'll greet you when I'm ready'. Which guests comply is honestly information about guests."},
+                 "a": "Post a small sign by the door while training — 'Dog in training: I'll greet you when I'm ready'. Most guests will respect the sign; if they don't, keep the dog behind the gate."},
             ],
         },
         {
@@ -158,18 +158,18 @@ STAGE = {
             "emoji": "🚗",
             "time": "10 minutes × 2 a week",
             "goal": "Load on cue, settle or nap during the drive, and unload politely — no drool, no scramble.",
-            "why": "Many rescues have car histories you'll never know: transport cages, one-way trips, km of fear. "
-                   "Cars matter for vet visits and emergencies, so we rebuild them slow: parked car = treat cafe, "
+            "why": "Many rescues have car histories you'll never know: transport cages, one-way trips, a history of fear. "
+                   "Cars matter for vet visits and emergencies, so we rebuild them slow: parked car = snack place, "
                    "engine on = nothing happens, one-minute drives = micro-adventures.",
             "need": ["Treats", "A crash-tested harness or secured crate", "A stuffed chew", "Short destination list (park! NOT the vet first)"],
             "steps": [
                 "Explore the parked, engine-off car with the door open: treats around, inside, on the floor.",
                 "Feed a meal or a chew in the car — and from now on the food toy in the car is car-ONLY (a separate one from the departure toy), so car = special snack place.",
                 "Say the new cue 'up' as you lure the hop onto the back seat, then mark, treat, and hop straight back out.",
-                "Sit in the car together, engine off, for five minutes of treat scattering — you as chauffeur of nothing.",
+                "Sit in the car together, engine off, for five minutes of treat scattering — no destination, no pressure.",
                 "Engine on, no movement, two minutes, treats. Nothing happening is the lesson.",
                 "Gradually: engine on → roll down the drive → one street, then park; build to ten and twenty minutes over weeks.",
-                "Always arrive somewhere NICE early in this training (the park). Never let the first real car trip be to the vet.",
+                "Always arrive somewhere NICE early in this training (the park). If a vet trip is needed before car training is finished, use a secured crate and ask the clinic for a quiet entrance — don't delay care.",
             ],
             "criteria": [
                 "They load onto the seat within ten seconds of the 'up' cue.",
@@ -178,7 +178,7 @@ STAGE = {
             "mistakes": [
                 "Don't drive with them loose in the cabin or poking out the front window — restraint is safety AND calm.",
                 "Don't make the first destination the clinic; anxious associations from day one linger for months.",
-                "Don't scold drool or crying — pace, treat placement and shorter trips is the medicine.",
+                "Don't scold drool or crying — pace, treat placement and shorter trips are the medicine.",
             ],
             "trouble": [
                 {"q": "They refuse to load.",
@@ -195,17 +195,16 @@ STAGE = {
             "goal": "Turn course progress into a written plan — your two weakest skills, a class or evaluator, and your year-one goals.",
             "why": "Courses don't finish behavior change; they hand off a plan. The Canine Good Citizen checklist is "
                    "a proven everyday-manners map of 10 items, and picking your own two weakest gives you exactly "
-                   "the right homework instead of a vague 'keep training'. The owners with a plan are usually the "
-                   "ones whose dogs stay.",
-            "need": ["The CGC-style checklist below", "A pen", "A reward-based class nearby if you want one"],
+                   "the right homework instead of a vague 'keep training'. A written plan can help owners keep training going.",
+            "need": ["The CGC test-items link below", "A pen", "A reward-based class nearby if you want one"],
             "steps": [
                 "Score your dog against the 10-item manners checklist (Canine Good Citizen items — see the 'Learn more' link below): mark each one done / needs work.",
-                "Circle the TWO weakest items — those are your training focus for the next month, two mini-sessions a week each.",
+                "Circle the TWO weakest items — those are your training focus for the next month, a few 2–5 minute sessions most days.",
                 "Use the three D's test each skill monthly: can they hold it longer, from farther, with more going on?",
-                "Book a reward-based class or ask reward-based trainer for an eval — check they're force-free before you sign up (ask what happens when the dog gets it wrong).",
+                "Book a reward-based class or ask a reward-based trainer for an eval — check they're force-free before you sign up (ask what happens when the dog gets it wrong).",
                 "Keep the joy alive: weekly sniffari, food puzzles, one new trick a month, and a photo dump you like.",
                 "Know your escalation triggers and write them down: aggression or bites, panic when alone, guarding that grows — that's the point you call a certified pro (CAAB/DACVB or CPDT-KA).",
-                "Celebrate: six stages done means most of year one's manners are in place, and returning-dog risk drops a lot when these starter skills hold.",
+                "Celebrate: these foundation skills make everyday life easier and give you a clear plan; keep practicing to protect the bond.",
             ],
             "criteria": [
                 "Your next-30-days plan is written down with two focus skills and dates.",

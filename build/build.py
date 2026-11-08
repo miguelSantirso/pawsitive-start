@@ -225,7 +225,7 @@ def home_body():
 <section class="home-head">
 <span class="kicker">For shelter &amp; rescue dog parents</span>
 <h1>A calm start for your new dog.</h1>
-<p class="lede">A step-by-step course for the first weeks after adoption: six stages, {TOTAL} short exercises, about ten minutes a day. No account and no experience needed.</p>
+<p class="lede">A step-by-step course for the first weeks after adoption: six stages, {TOTAL} short exercises, a few calm minutes at a time. No account and no experience needed.</p>
 </section>
 
 <section class="today-card js-focus" data-href="exercises/" aria-labelledby="today-title">
@@ -244,7 +244,7 @@ def home_body():
 <h2 id="progress-h" class="kicker">Your progress</h2>
 <p class="score-line js-score">0/{TOTAL} mastered</p>
 <div class="progress-row"><div class="progress" data-progress="all"><div class="progress-fill js-fill"></div></div><span class="progress-label js-prog-label"></span></div>
-<p class="small">Most people work through the course in six to ten weeks at ten minutes a day.</p>
+<p class="small">The core stages take most owners 8–12 weeks; Stage 6 continues into months 3–6. Plan for a few short sessions a day plus walks — not a strict ten-minute clock.</p>
 </div>
 </section>
 
@@ -467,6 +467,15 @@ def stage_body(s):
 </li>''')
     prev_stage = STAGES[n - 2] if n > 1 else None
     next_stage = STAGES[n] if n < len(STAGES) else None
+    essentials_html = ""
+    if s.get("essentials"):
+        items = "".join(f"<li>{esc(x)}</li>" for x in s["essentials"])
+        essentials_html = f'''
+<section class="essentials-card">
+<div class="section-head"><h2>First-week health &amp; ID</h2></div>
+<ul class="essentials-list">{items}</ul>
+</section>
+'''
     prev_html = (
         f'<a class="footlink" href="stage-{prev_stage["num"]}.html"><span class="dir">← Previous stage</span><span class="t">{prev_stage["num"]:02d} · {esc(prev_stage["name"])}</span></a>'
         if prev_stage else
@@ -488,6 +497,7 @@ def stage_body(s):
 <div class="progress-row"><div class="segs" data-progress="{n}"></div><span class="progress-label js-prog-label"></span></div>
 <div class="stage-banner js-stage-banner" role="status">Every exercise in this stage is mastered.</div>
 </section>
+{essentials_html}
 
 <section class="exercise-list-card">
 <div class="section-head"><h2>Exercises</h2><span class="small">{len(s["exercises"])} in this stage</span></div>
@@ -735,7 +745,7 @@ def main():
     pages = []
     pages.append(("index.html", shell(
         f"{BRAND} — dog training in small, calm steps",
-        f"A step-by-step course for newly adopted shelter dogs: six stages, {TOTAL} short exercises, about ten minutes a day.",
+        f"A step-by-step course for newly adopted shelter dogs: six stages, {TOTAL} short exercises, a few calm minutes at a time.",
         "", home_body(), "home", bare_title=True,
         body_attrs=' data-page="home"')))
     pages.append(("course.html", shell(

@@ -23,15 +23,16 @@ STAGE = {
             "why": "Crates are management superpowers for rescue households: house-training, travel, vet stays, "
                    "convalescence. But only a crate that predicts treats and naps. If your dog panics in a crate, "
                    "a gated room does the same job — panic is the line where you stop and switch.",
-            "need": ["A crate sized to stand + turn", "Soft bedding", "Chews", "Treats"],
+            "need": ["A crate sized to stand, turn around and lie down comfortably", "Soft bedding", "Chews", "Treats"],
             "steps": [
                 "Park the crate in the family room, door open or removed, comfy bedding inside.",
                 "All day, toss treats toward the crate as your dog wanders near — crate = jackpot dispenser.",
                 "Feed meals inside it, door open. This is the big one.",
-                "Once they waltz in for meals: close the door for a few seconds mid-meal, then open without fuss.",
+                "Once they waltz in for meals: after the meal, close the door for one second while they lick the bowl, then open. Build from there.",
                 "Build closed-door minutes: one, then two, then five, always with you visible, always calm.",
                 "Drop chew games in: stuffed toy, long-lasting snack. As they nap with the door closed, quietly extend time.",
-                "Step away briefly, then return — release them while calm, never mid-whine.",
+                "Then build out-of-sight time in the same small steps: 10 seconds, 30, 1 minute, 2, 5, 10 — always returning before worry.",
+                "Release them while calm, never mid-whine.",
             ],
             "criteria": [
                 "They choose the crate for a nap on their own, door open.",
@@ -68,13 +69,13 @@ STAGE = {
                 "Out-of-sight games: step behind the bathroom door for one or two seconds, come back before any worry. That's the entry rung.",
                 "Build seconds, then minutes — every rung shorter than anxiety. If they whine at ten seconds, your next rung is eight.",
                 "Give the special long-lasting food toy ONLY for departures, and pick it up on your return — it becomes the safety cue.",
-                "Grow real departures: one minute → five → ten → fifteen → forty (most panic happens early in an absence, which is why short absences are the safe rungs).",
+                "Grow real departures in small steps — 1, 2, 5, 10, 15, 20 minutes — and only extend while the dog stays calm on video. Distress often peaks in the first 40 minutes, so longer absences are harder, not safer. If you see drooling, pacing, barking, scratching or accidents, stop and get CSAT or behavior help.",
                 "Keep every hello and goodbye boring: quiet word, coat on, gone. When you return: settle first, greet second.",
                 "Film one session a week to check the truth — you can't see pacing and panting from the front door.",
             ],
             "criteria": [
                 "Ten minutes alone, visibly relaxed on video — napping or chewing, not pacing or whining.",
-                "Thirty to forty minutes with the food toy — no barking, howling, scratching or accidents.",
+                "Twenty minutes with the food toy — no barking, howling, scratching or accidents. Extend only while the video stays calm.",
             ],
             "mistakes": [
                 "Never 'test' past their tolerance to see what happens — every panic session digs the hole deeper.",
@@ -83,7 +84,7 @@ STAGE = {
             ],
             "trouble": [
                 {"q": "We're stuck; minutes never go past five without whining.",
-                 "a": "Camp at that rung for days — remove the departure cues (no coat ritual), longer chews, quieter returns. If true distress (drool, self-injury, accidents in minutes) shows up, call a certified behavior pro early: this is treatable and it does not fix itself."},
+                 "a": "Camp at that rung for days — remove the departure cues (no coat ritual), longer chews, quieter returns. If true distress (drool, self-injury, accidents in minutes) shows up, call a certified behavior pro early: this usually needs professional help and rarely resolves on its own."},
                 {"q": "They only panic when we drive off.",
                  "a": "Same ladder, different shape: pretend-drive rehearsal (sit in the car, engine on, drive 20 seconds, back); some dogs need the car as its own stage-one rung."},
             ],
@@ -94,13 +95,13 @@ STAGE = {
             "title": "Bark twice, then quiet",
             "emoji": "🤫",
             "time": "3 minutes × 2 a day + real moments",
-            "goal": "One or two alert barks, then silence on your cue — without ever punishing the bark or dulling their watchdog instinct.",
-            "why": "Excessive barking is a top neighbor-complaint for adoption failures. But barking is communication: "
+            "goal": "One or two alert barks, then silence on your cue — without ever punishing the bark or dulling their alert barking.",
+            "why": "Excessive barking is a common reason adoptions struggle. But barking is communication: "
                    "punish it and you either raise arousal (shouting reads as joining in) or you risk teaching a dog "
                    "that warnings don't exist. We honor the alert, then train the off-switch.",
             "need": ["A quiet-moment pause", "Treats", "Window film or a bed-shift for management"],
             "steps": [
-                "A real trigger barks (door knock, passer-by): let them bark twice — 'thank you, I heard it'.",
+                "A real trigger barks (door knock, passer-by): wait for the natural pause after one or two barks, then cue 'quiet' and mark the silence. If they cannot pause, add distance instead.",
                 "Say 'quiet' once, and hold a treat at their nose level slowly.",
                 "They have to stop barking to sniff: the instant of silence — mark it and feed.",
                 "Repeat. Stretch the silence before the treat: two seconds, then five, then ten.",
@@ -129,24 +130,25 @@ STAGE = {
             "title": "Handling, grooming & vet prep (with consent)",
             "emoji": "🩺",
             "time": "3 minutes × 3 a day",
-            "goal": "Your dog offers a chin-rest to say 'go ahead', and accepts paw, ear and lip handling in easy pieces.",
-            "why": "Shelter dogs inherit unknown handling histories, and vet-visit bites usually begin as vet-visit "
-                   "freezes nobody noticed. Cooperative care flips the script: your dog controls a 'start button' "
-                   "(chin up = pause, chin down = continue), and every handling step gets paid. Calm exams stop "
-                   "being luck.",
+            "goal": "Your dog offers a chin-rest to say 'go ahead', and accepts paw, ear, lip and tail handling in easy pieces.",
+            "why": "Shelter dogs inherit unknown handling histories, and vet-visit bites often start with subtle "
+                   "freezing nobody noticed. Cooperative care flips the script: your dog controls a 'start button' "
+                   "(chin staying in your palm = continue, lifting it = pause), and every handling step gets paid. "
+                   "Calm exams become more likely with practice.",
             "need": ["A brush and nail clippers (out but unused at first)", "Dog toothpaste", "Treats", "Both hands"],
             "steps": [
                 "Teach the chin rest: lure their chin onto your flat palm, mark the touch, build to five seconds.",
-                "Teach the contract: chin up = 'pause'; chin down (or staying) = 'continue'. Honor it every time — trust here is everything.",
+                "Teach the contract: chin staying in your palm = 'continue'; lifting their chin = 'pause'. Honor it every time — trust here is everything.",
                 "Paw pieces: touch a leg → mark → feed → release. Then one-second paw hold → mark → feed.",
                 "Brush: one gentle stroke → mark → feed. Add strokes only where zen holds.",
                 "Vet-minute motions: lift an ear flap lightly, lift a lip briefly, each with a treat; never at speed.",
+                "Tail: one light touch at the base of the tail → mark → feed; build to a two-second hold only where they stay soft.",
                 "Place tools nearby (brush, clippers, toothbrush with a lick of paste) without using them yet — sight = neutral.",
-                "Build a 60-second mock exam with the family: ears, paws, lip, tail — chin rest up the whole way.",
+                "Build a 60-second mock exam with the family: ears, paws, lip, tail — chin resting in your palm the whole way.",
             ],
             "criteria": [
                 "Offers the chin rest on cue in three different rooms.",
-                "Tolerates five-second paw, ear and tail handling from two different people.",
+                "Accepts five-second paw, ear, lip and tail handling with a relaxed body and chooses to stay.",
                 "Stands calmly through a one-minute mock exam.",
             ],
             "mistakes": [
@@ -164,21 +166,22 @@ STAGE = {
         },
         {
             "slug": "bowl-and-bones",
-            "title": "Guarding-proof meals and chews",
+            "title": "Meals and chews without guarding",
             "emoji": "🍲",
             "time": "Woven into every meal",
-            "goal": "People near food make dogs relax — your dog keeps eating happily while you toss, touch and even lift the bowl.",
+            "goal": "People near food make dogs relax — your dog keeps eating happily while you toss treats nearby and, when ready, add a bonus to the bowl.",
             "why": "Shelter life (scarce food, raced-for meals) makes resource guarding common — and food guarding is "
                    "one of the most common adoption-return reasons. The ASPCA protocol is ounce-of-prevention: "
-                   "your approach always predicts a better-treat bonus, so nobody ever needs to protect dinner.",
+                   "your approach always predicts a better-treat bonus, so the dog has less reason to protect dinner.",
             "need": ["Their normal meal", "High-value treats (better than the bowl!)", "A quiet corner", "No kids near meals"],
             "steps": [
+                "Pre-screen: if your dog has ever frozen, stared, growled, snapped or eaten faster when you approach, stop this ladder and work with a force-free pro; use management only.",
                 "Manage first: feed where nobody disturbs them, and never hover, grab or take the bowl.",
                 "Stand 4–5 feet away and toss one high-value treat onto or near the bowl, then walk off. Repeat at every meal.",
                 "One step closer at a time — only ever stepping closer if your dog keeps eating completely relaxed.",
                 "Then offer a treat from your hand at a distance (toss from a foot away rather than reach).",
-                "Touch the empty bowl edge with one hand while the other hand presents the treat bonus.",
-                "Lift the bowl a few inches mid-meal, drop in the bonus, set it gently back down.",
+                "Touch the bowl edge with one hand while the other presents the treat bonus.",
+                "Only if the dog stays loose and keeps eating, lift the bowl an inch to add the bonus and set it straight back down — never remove it.",
                 "Same game with chews or bones on other days: pass, toss a better chew, walk away — never remove, always trade.",
             ],
             "criteria": [

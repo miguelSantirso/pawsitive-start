@@ -52,11 +52,11 @@ Records + fresh stool sample; vaccination status; fecal test (parasites very com
 - **Karen Overall Relaxation Protocol**: 15-day, day-numbered ladder from "sit 5s" to complex distractions — the backbone of mat-settle & alone-time training.
 - **AbsoluteDogs (commercial)**: 3-minute game concepts — borrowable format only.
 
-## 5. Course syllabus (32 exercises / 6 stages)
+## 5. Course syllabus (33 exercises / 6 stages)
 Ordering logic: Stage 1 = safety/routine (nothing demanded of the dog); Stage 2 = shared language (marker, name, touch, consent) built on hand-feeding; Stage 3 = operating instructions indoors (sit, down, mat-settle, recall, leave-it, trade); Stage 4 = same skills proven outside in slices (gear, loose leash, doors, sniffari, pass-dogs); Stage 5 = the keeper-skills (crate, alone-time, quiet-on-cue, consent handling, bowl safety); Stage 6 = reliability + joy (long-line recall, tricks, guest manners, car, graduation plan/CGC).
 
 **Stage 1 – Welcome Home (days 1–3):** safe-space-setup; do-nothing-sitting; toilet-routine; scatter-hand-feed.
-**Stage 2 – Building Trust (days 3–14):** marker-word; name-game; hand-target; consent-check; signal-spotting.
+**Stage 2 – Building Trust (days 3–14):** marker-word; name-game; hand-target; consent-check; gentle-mouth; signal-spotting.
 **Stage 3 – First Words (weeks 2–5):** lured-sit; lured-down; mat-settle; indoor-recall; food-leave-it; trade-and-drop.
 **Stage 4 – Out in the World (weeks 4–10):** gear-comfort; leash-zen (indoor); street-loose-leash; door-wait; sniffari; calm-greet.
 **Stage 5 – Calm & Confidence (weeks 6–12):** crate-confidence; alone-staircase; quiet-on-cue; touch-and-vet-prep; bowl-and-bones.

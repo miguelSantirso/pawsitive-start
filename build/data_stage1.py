@@ -12,6 +12,12 @@ STAGE = {
              "These four exercises create the world your dog needs right now — one safe spot, one boring "
              "routine, one toilet schedule, and food that always comes with good news. Skip the visitors, "
              "the dog park and the big outings; that comes much later.",
+    "essentials": [
+        "See a vet in the first few days. Bring the shelter records and a fresh stool sample, and ask about parasites, heartworm and vaccination timing for your region.",
+        "Register the microchip to your name and address, and add a visible ID tag with your phone number.",
+        "Ask your vet about spay or neuter timing rather than assuming a date.",
+        "Keep common toxins out of reach: chocolate, grapes and raisins, xylitol (sugar-free gum), onions and garlic.",
+    ],
     "exercises": [
         {
             "slug": "safe-space",
@@ -20,9 +26,10 @@ STAGE = {
             "time": "20 minutes to set up, then it lives there",
             "goal": "Your dog has one spot they can always rely on for calm in the room where the family gathers.",
             "why": "In the shelter your dog had almost no control over anything — noise, other dogs, strange "
-                   "hands. A safe base gives that control back, and it is the fastest stress-reducer you can "
-                   "build in week one. Dogs with a reliable safe spot settle days earlier and bark less. If a "
-                   "crate came home with you, start gentle familiarization now — meals near it, door open — "
+                   "hands. A safe base gives that control back, and it is one of the most effective stress "
+                   "reducers in week one. Many dogs settle faster and bark less when they have a reliable "
+                   "spot to retreat to. If a crate came home with you, start gentle familiarization now — "
+                   "meals near it, door open — "
                    "and the full alone-time ladder waits for Stage 5.",
             "need": ["A bed or crate (door open)", "One towel or blanket", "Water bowl", "A few soft treats"],
             "steps": [
@@ -46,7 +53,7 @@ STAGE = {
                 {"q": "My dog hides under the actual bed instead.",
                  "a": "Hiding spots are safe spaces too. Use that corner for now and quietly make it comfortable; you can move the proper bed beside it next week."},
                 {"q": "They just pace and won't lie down anywhere.",
-                 "a": "Sit by the bed with a chew, yawn slowly, keep your shoulders low. Most dogs settle within two to three days — expect lots of sleep: 16–20 hours a day is common for a stressed dog in week one."},
+                 "a": "Sit by the bed with a chew, yawn slowly, keep your shoulders low. Many dogs begin to settle in the first days, but decompression can take weeks or months; let your dog set the pace. Most adult dogs sleep 12–14 hours, and stressed dogs may sleep more. If your dog is hard to rouse or not eating, call the vet."},
             ],
             "source": {"label": "VCA: how to crate train your dog", "url": "https://vcahospitals.com/know-your-pet/how-to-crate-train-your-dog"},
         },
@@ -64,9 +71,9 @@ STAGE = {
                 "Pick two calm moments a day — morning coffee, evening wind-down.",
                 "Sit or lie low near where your dog settles, angled slightly sideways, not squared-up facing them.",
                 "Stay off your phone and say nothing for 10–20 minutes.",
-                "If they stare at you, give a soft look-away. Soft, brief glances only — no nail-staring contests.",
+                "If they stare at you, give a soft look-away. Soft, brief glances only — no staring contests.",
                 "If they come close to sniff you, let them take the time. Touch nothing unless they clearly lean against you.",
-                "End your sit whenever the time runs out, no matter what they're doing.",
+                "End on time — or sooner if your dog is stressed.",
             ],
             "criteria": [
                 "Your dog stays settled within a few feet of you for most of the session.",
@@ -78,7 +85,7 @@ STAGE = {
                 "Don't use this slot to brush, wipe paws or trim → it must stay boring.",
             ],
             "trouble": [
-                {"q": " They hover and whine at me the whole time.",
+                {"q": "They hover and whine at me the whole time.",
                  "a": "Whining is often the dog asking 'what do you want?' — being predictably boring answers it. Shorten the sit to 5 minutes twice a day for a few days."},
                 {"q": "They fall asleep instantly — every time.",
                  "a": "That is the exercise working. Falling asleep near you is a big trust milestone; keep it going."},
@@ -86,7 +93,7 @@ STAGE = {
         },
         {
             "slug": "toilet-routine",
-            "title": "The toilet drill that ends accidents",
+            "title": "The toilet drill that prevents accidents",
             "emoji": "🚽",
             "time": "5 minutes per trip, on schedule all day",
             "goal": "One toilet spot, one schedule, big rewards — before accidents can happen, not after.",
@@ -99,13 +106,13 @@ STAGE = {
                 "Pick the spot and the door — always the same patch, always the same route out.",
                 "Write the schedule: immediately on waking, 10 minutes after every meal or big drink, after every nap and play session, roughly hourly in between while awake, and last thing at night. Put phone alerts on.",
                 "Clip the lead on, walk calmly to the spot, and say your phrase once ('go potty').",
-                "Stand still and boring for 2–3 minutes. Sniffing first is normal and part of the process.",
+                "Stand still and boring for 3–4 minutes. Sniffing first is normal and part of the process.",
                 "The second they finish — praise and deliver a treat while still outside on the spot.",
                 "Come back inside; keep the dog with you or pen them so a quiet corner accident isn't possible, then try again in 10–15 minutes.",
                 "Any accident: say nothing, blot it, clean with an enzyme cleaner, go 10 minutes earlier next time, and jot down when it happened to spot their pattern.",
             ],
             "criteria": [
-                "Five straight days with no accidents while you keep the schedule.",
+                "Accidents are rare and decreasing over five days while you keep the schedule.",
                 "Your dog heads for the door or the spot when they need to go, most times.",
             ],
             "mistakes": [
@@ -117,7 +124,7 @@ STAGE = {
                 {"q": "They come right back inside and go.",
                  "a": "They were too tense to go outside yet — classic in new rescues. Wait longer outside quietly, or toss a treat into the patch of grass to help them relax. Go back in only after a success or your full 3–4 minutes."},
                 {"q": "Night-time accidents only.",
-                 "a": "Lift water about two hours before bed (ask the vet), last trip right before sleep, and pen them next to the bed the first week."},
+                 "a": "Don't withhold water unless your vet specifically advises it. If your vet agrees, take up the bowl after the last trip; always leave water available in hot weather or for dogs on medication. Last trip right before sleep, and pen them next to the bed the first week."},
                 {"q": "They seem to go anywhere at all, constantly.",
                  "a": "Tether them to your belt indoors ('umbilical training') for a few days, and mention it at the vet — infections and parasites are common causes of accidents in shelter dogs."},
             ],
@@ -135,11 +142,11 @@ STAGE = {
             "need": ["Their daily food ration", "A mat or grass patch", "A stuffed Kong or puzzle toy", "A quiet corner"],
             "steps": [
                 "Split today's food into 3–4 portions.",
-                "Portion 1: scatter it in the grass or on a mat and let them 'find it' — this is the sniff game.",
+                "Portion 1: scatter it on a mat, or in your own yard once your vet confirms vaccination status; avoid public grass until then. Let them 'find it' — this is the sniff game.",
                 "Portion 2: hand-feed a few pieces at a time from your flat palm, asking for nothing, saying nothing.",
                 "Portion 3: stuff a puzzle toy or frozen Kong for after, in their safe spot.",
                 "Reserve a small handful as jackpots (extra-big payouts) for moments later in the day (new things, brave moments).",
-                "Puzzles, chews and bowls get picked up after meals — no free-feeding from an always-full bowl.",
+                "Pick up unfinished food only after the meal window; never snatch a bowl or chew the dog is still using — trade if you need it back. No free-feeding from an always-full bowl.",
             ],
             "criteria": [
                 "Your dog perks up at the sound of your approach at meal times.",

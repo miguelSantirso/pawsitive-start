@@ -684,6 +684,19 @@ main.shell.narrow { max-width: 760px; }
 }
 .exercise-list-card .section-head { margin-top: 0; }
 
+.essentials-card {
+  background: var(--sage-soft);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--sage);
+  border-radius: 9px;
+  padding: 16px 20px 10px;
+  margin: 20px 0 4px;
+}
+.essentials-card .section-head { margin: 0 0 6px; }
+.essentials-card h2 { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sage); }
+.essentials-list { margin: 4px 0 8px; padding-left: 18px; }
+.essentials-list li { font-size: 0.92rem; margin: 6px 0; line-height: 1.5; }
+
 /* ---------- exercise page ---------- */
 .exercise-head { padding: 6px 0 0; }
 .exercise-head h1 { margin: 8px 0 10px; max-width: 24ch; }

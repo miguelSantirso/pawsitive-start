@@ -17,7 +17,7 @@ No Node, no dependencies, no build tooling to install — Python 3.9+ is the onl
 
 ## Rebuilding the site
 
-The 40 HTML pages are generated from Python data modules:
+The 43 HTML pages are generated from Python data modules:
 
 ```bash
 cd build

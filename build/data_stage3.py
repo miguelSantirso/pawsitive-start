@@ -29,7 +29,8 @@ STAGE = {
                 "The instant the bottom lands: 'Yes!' → treat. (Mark the landing, not the sniffing before it.)",
                 "Five reps with the lure, then five with the same motion using an empty hand — mark, then pay from the other hand.",
                 "When the empty-hand motion reliably works, say the word 'sit' exactly as you make the sweep.",
-                "Fade the sweep: word only → mark → pay. Then pay only about four times out of five.",
+                "Fade the sweep: word only → mark → pay. Keep paying every correct sit while it is new; save occasional jackpots for later.",
+                "Build a 10-second hold: pay two or three treats while they stay, then release with 'okay' or 'free'.",
                 "Practice in three rooms, and at doorways — a sit at a closed door is next stage's door-wait groundwork.",
             ],
             "criteria": [
@@ -128,12 +129,12 @@ STAGE = {
         },
         {
             "slug": "indoor-recall",
-            "title": "Come when called — the indoor party",
+            "title": "Come when called — indoors",
             "emoji": "🏃",
             "time": "2 minutes × 4 a day",
             "goal": "From another room, on one 'come', your dog sprints to you like the best news ever dropped.",
             "why": "Recalls save lives — and rescues get fewer re-dos than most dogs if recall is shaky. Indoor recall "
-                   "is where you build the promise: 'come = party'. We only promise things we can keep, so the never-poison "
+                   "is where you build the promise: 'come = a big reward'. We only promise things we can keep, so the never-poison "
                    "rule lives here from day one.",
             "need": ["Jackpot treats (10 tiny pieces)", "A family member for two-player recall", "Your happiest voice"],
             "steps": [
@@ -141,8 +142,8 @@ STAGE = {
                 "On arrival: 'Yes!' and dump the jackpot — ten tiny treats tossed out so arriving sustains a whole feast.",
                 "Hide-and-seek version: from another room, call once and duck out of sight; the dog gets to find you, then party.",
                 "Ping-pong: two people at opposite hallway ends, strictly alternate calls, and each arrival is paid.",
-                "Ignored? No third call, no chasing — walk up calmly, and remember the lesson: shorter distance next time. Recall is a bill you pay with easy wins.",
-                "Always finish the arrival by lightly touching their collar and feeding — collar-touch = treats (this keeps vet visits and harness-grabs from ever becoming scary).",
+                "Ignored? No second call, no chasing — walk up calmly, and remember the lesson: shorter distance next time. Recall is a bill you pay with easy wins.",
+                "Always finish the arrival by lightly touching their collar and feeding — if your dog is comfortable. Start on the shoulder or harness for a hand-shy dog, and build to the collar slowly.",
             ],
             "criteria": [
                 "9 out of 10 recalls from another room, arriving within three seconds.",
@@ -175,7 +176,7 @@ STAGE = {
                 "The instant their nose pulls back — even a centimeter: 'Yes!' and pay from the OTHER hand.",
                 "Repeat until they pull back and look at your face within a second or two.",
                 "Now name it: just before you present the closed fist, say 'leave it' — then mark and pay any ignoring (nose off, glance up).",
-                "Floor version: place a treat, cover it with your shoe. Same rule — mark ignoring, pay from hand.",
+                "Floor version: place a treat, cover it with your hand or an inverted cup. Same rule — mark ignoring, pay from hand.",
                 "Uncovered floor treat: walk together toward it, and mark any head-turn away or step-back; pay.",
                 "Generalize: treat on the table edge, by the front door, while you're cooking — one new surface at a time.",
             ],
@@ -184,7 +185,7 @@ STAGE = {
                 "Walks past a tempting object with you, head staying away from it.",
             ],
             "mistakes": [
-                "Never let them win the 'leave-it' item 'just this once' — one payout voids a week of work.",
+                "Never let them win the 'leave-it' item 'just this once' — one success can set you back; aim for no repeats.",
                 "Don't scold a grab — that teaches stealing-with-eyes-open; instead reset with an easier distance.",
                 "Don't always pay with the very item you blocked — mix your payoffs so 'leave it' isn't 'wait, then eat it'.",
             ],
@@ -213,7 +214,7 @@ STAGE = {
                 "When the drop is quick and smooth, name it: 'drop' as the mouth opens.",
                 "Play the trade game with ordinary objects (toys before treasure). Every trade stays in their favor — sprinkle more than one treat for high-value items.",
                 "Play both directions: object-for-food and object-for-better-object, always ending with something fun.",
-                "In real life: dropped the sock? Trade up, pay, and go happily. Nothing worth guarding ever happens here.",
+                "In real life: dropped the sock? Trade up, pay, and go happily. Trade games make guarding less likely, but they do not make it impossible.",
             ],
             "criteria": [
                 "Releases a toy on the first 'drop' nine times out of ten.",

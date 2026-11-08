@@ -5,9 +5,9 @@ STAGE = {
     "name": "Building Trust",
     "emoji": "🌱",
     "color": 2,  # teal
-    "when": "Days 3–14",
+    "when": "Usually days 3–14",
     "purpose": "Install a shared language — your marker word, their name, your touch rules and reading their signals.",
-    "intro": "Now that meals, sleep and toilets are predictable, your dog can start learning a language with "
+    "intro": "Start when your dog is eating, sleeping and settling — usually after the first three to five days; keep sessions optional. Now that meals, sleep and toilets are predictable, your dog can start learning a language with "
              "you. This language has just four words to start: the marker that says 'reward coming', their "
              "name that says 'look at me', your palm that says 'come with me', and consent that says 'you "
              "decide about touch'. All of it is taught with tiny food payments while your dog is calm, "
@@ -34,7 +34,7 @@ STAGE = {
             ],
             "criteria": [
                 "Hearing 'Yes!' turns their head to you immediately, from anywhere in the room.",
-                "They start offering behaviors (sits, glances, standing at the mat spot) hoping to earn the 'Yes!' again.",
+                "They start offering behaviors (sits, glances, a step toward you) hoping to earn the 'Yes!' again.",
             ],
             "mistakes": [
                 "Don't use 'Yes!' as filler praise ('yes, yes, good boy, yes') or in irritation at bad behavior — keep it sacred.",
@@ -78,7 +78,7 @@ STAGE = {
             ],
             "trouble": [
                 {"q": "They flinch or freeze at the name they came with.",
-                 "a": "Rename the dog — two short syllables, easy to sing ('Milo', 'Nova'). Say it in your soft voice and pay a tiny treat every single casual use for a week: new name, fresh life."},
+                 "a": "Rename the dog — two short syllables, easy to sing ('Milo', 'Nova'). Say it in your soft voice and pay a tiny treat every casual use for a week: a fresh start with a name they can learn."},
                 {"q": "Zero reaction, ever.",
                  "a": "Play at half distance right after a meal, pay every turn, and if they still never orient in a week, ask the vet to check their hearing."},
             ],
@@ -99,7 +99,7 @@ STAGE = {
                 "Move the palm a little farther; the moment their nose touches: mark and pay.",
                 "Hide your hand behind your back for a beat, then present it again — a fresh 'touch'. Repeat the game.",
                 "When booping is instant, add the word: 'touch' as the palm appears.",
-                "Move the palm left, right, up, down — one step at a time — and let them follow it walking.",
+                "Move the palm left, right, up, down and one step farther away — let them follow it walking. Then ask a second family member to offer the same palm.",
                 "Use it today: send them past the scary suitcase, onto their mat, or into the car.",
             ],
             "criteria": [
@@ -127,7 +127,7 @@ STAGE = {
             "goal": "All family petting uses the opt-in loop: brief pet, pause, and the dog decides whether to ask again.",
             "why": "Many rescues had touch they couldn't control — some freeze when grabbed (which looks like 'cuddly' "
                    "but isn't) and some snap later. The pet–pause loop teaches your dog that touch is always their "
-                   "call, which is how confident, bite-free dogs are built.",
+                   "call, which is how confident dogs who are less likely to feel cornered are built.",
             "need": ["Everyone in the family", "The household rule"],
             "steps": [
                 "Before petting, crouch low, offer a loose hand at their side, and wait. If they don't approach, petting is skipped — it's their offer that starts it.",
@@ -139,16 +139,16 @@ STAGE = {
             ],
             "criteria": [
                 "In about four of five pauses, your dog re-initiates contact within seconds.",
-                "A full week passes without any stiff, freezing or slow-escape moments during 10-second petting sessions.",
+                "A full week passes without any stiff, freezing or slow-escape moments during brief petting loops (3–5 strokes, then pause).",
             ],
             "mistakes": [
                 "Never 'prove they're safe' by pushing through a withdrawal — that's the exact lesson that makes dogs bite later.",
                 "Don't pet-the-head or pat-pat early on; slow shoulder work only.",
-                "No wrestling, hugging or 'loving' that pins them — dogs don't read hugs as affection, they read them as restraint.",
+                "No wrestling, hugging or 'loving' that pins them — many dogs find hugs confining rather than affectionate.",
             ],
             "trouble": [
                 {"q": "They flinch every time a hand arrives.",
-                 "a": "Slide one slow finger along their chest for two seconds and follow it with a treat — hands mean goodies. Keep the loops short for two weeks."},
+                 "a": "Do not touch a flinching dog. Toss a treat as your hand approaches, keep your hand low and still, and let the dog choose to close the gap. If they don't, stop. Keep the loops short for two weeks."},
                 {"q": "They get so excited they mouth my hands.",
                  "a": "Motion is exciting, so slow your strokes way down, and end the loop before the mouthing starts — freeze, hand up, and wait for them to settle."},
             ],
@@ -159,14 +159,14 @@ STAGE = {
             "title": "Gentle mouth — teeth off skin",
             "emoji": "🦷",
             "time": "2 minutes × a few times a day",
-            "goal": "Swap the shark game for the toy game: teeth on toys are great, teeth on people end the fun.",
+            "goal": "Swap mouthing for toy play: teeth on toys are great, teeth on people end the fun.",
             "why": "Nearly every puppy — and plenty of adult shelter dogs — jaws at hands and sleeves in the first "
                    "weeks. It's over-tired play, not dominance, and rough hands or yelling make hands better than "
                    "any toy in the house. Rescue dogs are sadly returned over mouthing that was accidentally "
                    "trained, so we pay the calm mouth from day one.",
             "need": ["A tug toy or plush toy they love", "Long-lasting chews for after play", "Pea-sized treats"],
             "steps": [
-                "The instant teeth touch skin: freeze like furniture. No squeals, no pushing away — both read as exactly the game they hoped for.",
+                "The instant teeth touch skin: freeze like furniture. Freeze and withdraw attention first; if your puppy finds a yelp exciting, skip it.",
                 "Stay boring for a full five seconds, then offer the toy one-handed and make it the best thing in the room.",
                 "Mark 'Yes!' the moment teeth clamp onto the toy and play a short, low-energy round of tug.",
                 "When they lick you or take treats with a soft mouth, mark that too — calm teeth are the whole exercise.",
@@ -180,7 +180,7 @@ STAGE = {
             "mistakes": [
                 "Don't wrestle, tap noses or shove — all of it makes hands the best game in the house.",
                 "Don't yell 'no bite' as a fun, loud game — your attention is exactly the prize they were fishing for.",
-                "Don't skip the cause: over-tired dogs mostly need naps, not lessons — much shark-hour is really nap-hour.",
+                "Don't skip the cause: over-tired dogs mostly need naps, not lessons — much of that mouthing is really tiredness.",
             ],
             "trouble": [
                 {"q": "They get MORE frantic when I freeze.",
@@ -221,7 +221,7 @@ STAGE = {
                 {"q": "I can't find any tells — my dog seems mellow.",
                  "a": "Lucky dog! Write your three happy tells first, and treat the day you see your first lip-lick or shake-off as a test: what changed right before it?"},
                 {"q": "My video is all wagging tails.",
-                 "a": "Watch the tail itself — loose, sweeping and wide means happy; stiff, high-speed or low-slow can mean the opposite. Film again when a delivery person comes: that contrast is gold."},
+                 "a": "Watch the tail itself — loose, sweeping and wide means happy; stiff, high-speed or low and slow can mean the opposite. Film again when a delivery person comes: that contrast is gold."},
             ],
             "source": {"label": "VCA: signs your dog is stressed", "url": "https://vcahospitals.com/know-your-pet/signs-your-dog-is-stressed-and-how-to-relieve-it"},
         },
