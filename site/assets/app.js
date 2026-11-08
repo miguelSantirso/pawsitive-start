@@ -1,0 +1,780 @@
+/* ============================================================
+   Pawsitive Start — progress engine v4
+   Persistence: localStorage key "pawsitive-start-v2" (versioned)
+   Every page includes <script>window.PS = {...manifest}</script>:
+     PS.slugs  : [slug, ...] in curriculum order
+     PS.stages : { "1": {n, e, w}, ... }
+     PS.ex     : { slug: { t, g, st, s, cr, tm } }
+   Exercise pages: <body data-page="exercise" data-slug="...">
+   ============================================================ */
+(function () {
+  "use strict";
+
+  var KEY = "pawsitive-start-v2";
+  var scriptEl = document.currentScript;
+  var root = (scriptEl && scriptEl.getAttribute("data-root")) || "./";
+  if (!root) root = "./";
+
+  /* ---------- state ---------- */
+  function blank() { return { v: 1, savedAt: null, ex: {}, days: [], notes: {} }; }
+
+  var storageOK = true;
+  var memory = null;
+
+  function rawGet() {
+    if (storageOK) {
+      try { return localStorage.getItem(KEY); } catch (e) { storageOK = false; }
+    }
+    try { return memory ? JSON.stringify(memory) : null; } catch (e) { return null; }
+  }
+  function rawSet(str) {
+    if (storageOK) {
+      try { localStorage.setItem(KEY, str); return true; } catch (e) { storageOK = false; }
+    }
+    try { memory = JSON.parse(str || "{}"); } catch (e) { memory = blank(); }
+    return false;
+  }
+  function rawRemove() {
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    try { if (storageOK) localStorage.removeItem("pawsitive-start-v1"); } catch (e) {}
+    memory = null;
+  }
+
+  function normalize(st) {
+    if (!st || typeof st !== "object" || st.v !== 1) return null;
+    if (!st.ex || typeof st.ex !== "object" || Array.isArray(st.ex)) return null;
+    return {
+      v: 1,
+      savedAt: st.savedAt || null,
+      ex: st.ex,
+      days: Array.isArray(st.days) ? st.days : [],
+      notes: st.notes && typeof st.notes === "object" && !Array.isArray(st.notes) ? st.notes : {}
+    };
+  }
+
+  function load() {
+    var str = rawGet();
+    if (!str) return blank();
+    try { return normalize(JSON.parse(str)) || blank(); }
+    catch (e) { return blank(); }
+  }
+
+  var state = load();
+
+  function save() {
+    state.savedAt = new Date().toISOString();
+    rawSet(JSON.stringify(state));
+    $$(".js-saved").forEach(function (el) {
+      el.textContent = "Saved";
+      clearTimeout(el._t);
+      el._t = setTimeout(function () { el.textContent = ""; }, 3000);
+    });
+    try { render(); } catch (e) {}
+  }
+
+  /* ---------- helpers ---------- */
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  function slug() { return document.body.getAttribute("data-slug") || null; }
+  function exMeta(sg) { return (window.PS && PS.ex && PS.ex[sg]) || null; }
+  function slugs() { return (window.PS && PS.slugs) || []; }
+  function today() {
+    var d = new Date();
+    return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
+  }
+  function shiftDay(dstr, n) {
+    var p = dstr.split("-");
+    var d = new Date(+p[0], +p[1] - 1, +p[2]);
+    d.setDate(d.getDate() + n);
+    return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
+  }
+  function info(sg) {
+    if (!state.ex[sg]) state.ex[sg] = { s: [], c: [], m: false, t: null };
+    if (!state.ex[sg].c) state.ex[sg].c = [];
+    if (!state.ex[sg].s) state.ex[sg].s = [];
+    return state.ex[sg];
+  }
+  function isMastered(sg) { return !!(state.ex[sg] && state.ex[sg].m); }
+  function countTrue(arr) { var n = 0; for (var i = 0; i < arr.length; i++) if (arr[i]) n++; return n; }
+  function stepsMeta(sg) { var m = exMeta(sg); return { s: (m && m.s) || 0, cr: (m && m.cr) || 0 }; }
+  function announce(msg) { $$(".js-announcer").forEach(function (el) { el.textContent = msg; }); }
+
+  /* ---------- mutations ---------- */
+  function toggleItem(sg, kind, i, val) {
+    var inf = info(sg);
+    var lostMastery = inf.m && !val;
+    inf[kind][i] = val;
+    if (!val && inf.m) inf.m = false;
+    save();
+    var total = kind === "s" ? stepsMeta(sg).s : stepsMeta(sg).cr;
+    var done = countTrue(inf[kind]);
+    announce((val ? "Checked. " : "Unchecked. ") + done + " of " + total +
+      " " + (kind === "s" ? "steps" : "mastery checks") + " complete.");
+    if (lostMastery) showToast("Mastery removed because a step was unchecked.");
+  }
+
+  function setMastered(sg, on) {
+    var inf = info(sg);
+    var was = inf.m;
+    if (on) {
+      var meta = stepsMeta(sg), i;
+      for (i = 0; i < meta.s; i++) inf.s[i] = true;
+      for (i = 0; i < meta.cr; i++) inf.c[i] = true;
+      inf.m = true;
+      if (!inf.t) inf.t = today();
+    } else {
+      inf.m = false;
+    }
+    save();
+    announce(on ? "Exercise marked as mastered." : "Mastery removed.");
+    if (on && !was) celebrateStage(sg);
+  }
+
+  function stageOf(sg) { var m = exMeta(sg); return m && m.st ? String(m.st) : null; }
+  function stageSlugs(n) { return slugs().filter(function (s) { return String((exMeta(s) || {}).st || "") === String(n); }); }
+
+  function celebrateStage(sg) {
+    var n = stageOf(sg);
+    if (!n) return;
+    var all = stageSlugs(n);
+    if (!all.length || !all.every(isMastered)) return;
+    var meta = (window.PS && PS.stages && PS.stages[n]) || { n: "this stage" };
+    showToast("Stage complete: " + meta.n + ".");
+    announce("Stage complete: " + meta.n + ".");
+  }
+
+  /* ---------- progress math ---------- */
+  function firstUnmastered() {
+    var all = slugs();
+    for (var i = 0; i < all.length; i++) if (!isMastered(all[i])) return all[i];
+    return null;
+  }
+  function daysInLast7() {
+    var t = today(), n = 0;
+    for (var i = 0; i < 7; i++) if (state.days.indexOf(shiftDay(t, -i)) !== -1) n++;
+    return n;
+  }
+  function currentStreak() {
+    var days = state.days.slice().sort();
+    if (!days.length) return 0;
+    var start = days[days.length - 1] === today() ? today() : shiftDay(today(), -1);
+    if (days.indexOf(start) === -1) return 0;
+    var n = 0, d = start;
+    while (days.indexOf(d) !== -1) { n++; d = shiftDay(d, -1); }
+    return n;
+  }
+
+  /* ---------- render ---------- */
+  function render() {
+    renderScore();
+    renderProgressBars();
+    renderStageCards();
+    renderStatusPills();
+    renderToday();
+    renderStreak();
+    renderExercisePage();
+    renderSaveNote();
+    renderInstall();
+  }
+
+  function renderScore() {
+    var all = slugs(), m = 0;
+    all.forEach(function (s) { if (isMastered(s)) m++; });
+    $$(".js-score").forEach(function (el) { el.textContent = m + "/" + all.length + " mastered"; });
+  }
+
+  function renderProgressBars() {
+    $$("[data-progress]").forEach(function (el) {
+      var scope = el.getAttribute("data-progress") || "all";
+      var list = scope === "all" ? slugs() : stageSlugs(scope);
+      if (!list.length) return;
+      var m = list.filter(isMastered).length;
+      var pct = Math.round((m / list.length) * 100);
+      el.classList.toggle("is-done", m === list.length);
+
+      if (el.classList.contains("segs")) {
+        el.innerHTML = list.map(function (_, i) {
+          return '<span class="seg' + (i < m ? " on" : "") + '" aria-hidden="true"></span>';
+        }).join("");
+      }
+      if (el.classList.contains("progress")) {
+        var fill = $(".js-fill", el);
+        if (fill) fill.style.width = pct + "%";
+      }
+      if (el.classList.contains("ring")) {
+        el.style.setProperty("--pct", pct + "%");
+        var num = $(".js-ring-num", el);
+        if (num) num.textContent = pct + "%";
+      }
+
+      var wrap = el.closest(".progress-row") || el.parentElement;
+      var label = wrap ? $(".js-prog-label", wrap) : null;
+      if (label) label.textContent = m + " of " + list.length + " mastered";
+
+      el.setAttribute("role", "progressbar");
+      el.setAttribute("aria-valuemin", "0");
+      el.setAttribute("aria-valuemax", "100");
+      el.setAttribute("aria-valuenow", String(pct));
+      el.setAttribute("aria-valuetext", m + " of " + list.length + " exercises mastered");
+    });
+  }
+
+  function renderStageCards() {
+    $$(".js-stage-card").forEach(function (card) {
+      var n = card.getAttribute("data-stage");
+      var all = stageSlugs(n);
+      if (!all.length) return;
+      card.classList.toggle("is-done", all.every(isMastered));
+    });
+    if (document.body.getAttribute("data-page") === "stage") {
+      var bs = document.body.getAttribute("data-stage");
+      var list = stageSlugs(bs);
+      var allDone = list.length && list.every(isMastered);
+      $$(".js-stage-banner").forEach(function (b) { b.classList.toggle("show", !!allDone); });
+    }
+  }
+
+  function pillHTML(sg) {
+    if (isMastered(sg)) return '<span class="pill done">Mastered</span>';
+    var arr = (state.ex[sg] && state.ex[sg].s) || [];
+    var done = countTrue(arr), total = stepsMeta(sg).s;
+    if (done > 0) return '<span class="pill doing">' + done + " of " + total + " steps</span>";
+    return '<span class="pill">Not started</span>';
+  }
+
+  function renderStatusPills() {
+    $$("[data-ex]").forEach(function (row) {
+      var sg = row.getAttribute("data-ex");
+      var slot = $(".status-slot", row);
+      if (slot) slot.innerHTML = pillHTML(sg);
+    });
+  }
+
+  function renderToday() {
+    var card = $(".js-focus");
+    if (!card) return;
+    var kick = $(".js-focus-kicker", card);
+    var metaEl = $(".js-focus-meta", card);
+    var title = $(".js-focus-title", card);
+    var text = $(".js-focus-text", card);
+    var link = $(".js-focus-link", card);
+    var linkText = $(".js-focus-link-text", card);
+    var sg = firstUnmastered();
+
+    if (!sg) {
+      card.classList.add("is-done");
+      if (kick) kick.textContent = "Course complete";
+      if (metaEl) metaEl.textContent = "All six stages";
+      if (title) title.textContent = "Every stage is mastered.";
+      if (text) text.textContent = "Keep the little games going and revisit anything shaky in a month. Dogs love a refresher.";
+      if (link) link.setAttribute("href", "course.html");
+      if (linkText) linkText.textContent = "Revisit the course";
+      return;
+    }
+
+    var m = exMeta(sg) || {};
+    var stage = (window.PS && PS.stages && PS.stages[String(m.st)]) || { n: "Stage " + (m.st || "") };
+    var href = (card.getAttribute("data-href") || "exercises/") + sg + ".html";
+    card.classList.remove("is-done");
+    if (kick) kick.textContent = "Today's focus";
+    if (metaEl) metaEl.textContent = "Stage " + (m.st || "") + " · " + (m.tm || stage.n || "");
+    if (title) title.textContent = m.t || sg;
+    if (text) text.textContent = m.g || "";
+    if (link) link.setAttribute("href", href);
+    if (linkText) linkText.textContent = "Start exercise";
+  }
+
+  function renderStreak() {
+    $$(".js-streak").forEach(function (btn) {
+      var logged = state.days.indexOf(today()) !== -1;
+      var n = currentStreak();
+      if (logged) {
+        btn.setAttribute("disabled", "disabled");
+        btn.textContent = n > 1 ? "Practised today · " + n + "-day streak" : "Practised today";
+      } else {
+        btn.removeAttribute("disabled");
+        btn.textContent = n > 0 ? "Log today · keep your " + n + "-day streak" : "I practised today";
+      }
+    });
+    $$(".js-streakline").forEach(function (el) {
+      var d7 = daysInLast7();
+      el.textContent = d7 === 0
+        ? "No practice logged yet. A few minutes today is a good start."
+        : d7 + (d7 === 1 ? " practice day" : " practice days") + " in the last seven.";
+    });
+  }
+
+  function renderExercisePage() {
+    var sg = slug();
+    if (!sg || document.body.getAttribute("data-page") !== "exercise") return;
+    var inf = state.ex[sg] || { s: [], c: [], m: false };
+
+    $$("li[data-i]").forEach(function (li) {
+      var i = +li.getAttribute("data-i");
+      var input = $('input[type="checkbox"]', li);
+      var val = !!(inf.s && inf.s[i]);
+      if (input && input.checked !== val) input.checked = val;
+      li.classList.toggle("checked", val);
+    });
+    $$("li[data-c]").forEach(function (li) {
+      var i = +li.getAttribute("data-c");
+      var input = $('input[type="checkbox"]', li);
+      var val = !!(inf.c && inf.c[i]);
+      if (input && input.checked !== val) input.checked = val;
+      li.classList.toggle("checked", val);
+    });
+
+    var meta = stepsMeta(sg);
+    var sDone = countTrue(inf.s || []);
+    var cDone = countTrue(inf.c || []);
+    $$(".js-stepcount").forEach(function (el) {
+      el.textContent = isMastered(sg) ? "Mastered" : sDone + " of " + meta.s + " steps done";
+    });
+
+    var pct = Math.round(((sDone + cDone) / Math.max(meta.s + meta.cr, 1)) * 100);
+    $$(".js-subfill").forEach(function (f) {
+      var track = f.closest(".subbar-track");
+      if (track) track.setAttribute("aria-valuenow", String(pct));
+      f.style.width = pct + "%";
+    });
+
+    var panel = $(".master-panel");
+    if (panel) {
+      var btn = $(".js-master", panel);
+      panel.classList.toggle("done", isMastered(sg));
+      if (btn) {
+        if (isMastered(sg)) {
+          btn.textContent = "Mastered — tap to undo";
+          btn.className = "btn btn-quiet js-master";
+        } else {
+          btn.textContent = "Mark as mastered";
+          btn.className = "btn btn-primary js-master";
+        }
+      }
+    }
+
+    var ta = $(".js-notes");
+    if (ta && document.activeElement !== ta) ta.value = state.notes[sg] || "";
+    renderSessionBar(sDone, meta.s);
+  }
+
+  function renderSessionBar(sDone, total) {
+    var label = $(".js-session-label");
+    var fill = $(".js-session-fill");
+    var btn = $(".session-bar .js-session-start");
+    if (!label && !fill && !btn) return;
+    var sg = slug();
+    var mastered = sg && isMastered(sg);
+    var done = typeof sDone === "number" ? sDone : 0;
+    var all = typeof total === "number" ? total : stepsMeta(sg).s;
+    var pct = all ? Math.round((done / all) * 100) : 0;
+    if (mastered) pct = 100;
+    if (label) {
+      label.textContent = mastered ? "Mastered" : (done >= all && all > 0 ? "All steps done" : done + " of " + all + " steps");
+    }
+    if (fill) fill.style.width = pct + "%";
+    if (btn) {
+      if (mastered) btn.textContent = "Review";
+      else if (done >= all && all > 0) btn.textContent = "Finish";
+      else btn.textContent = done > 0 ? "Continue" : "Start";
+    }
+  }
+
+  function renderSaveNote() {
+    $$(".js-save-note").forEach(function (el) {
+      el.textContent = storageOK
+        ? "Progress is saved in this browser, on this device. No account, nothing leaves your device."
+        : "This browser is blocking saving. Progress may be lost if you close the tab.";
+    });
+  }
+
+  /* ---------- toast + timer ---------- */
+  var toastTimer = null;
+  function showToast(msg) {
+    var t = $(".toast");
+    if (!t) {
+      t = document.createElement("div");
+      t.className = "toast";
+      t.setAttribute("role", "status");
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add("show");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2800);
+  }
+
+  function wireTimer() {
+    $$(".js-timer-btn").forEach(function (btn) {
+      var sec = +btn.getAttribute("data-sec") || 10;
+      var readout = $(".js-timer-readout", btn.closest(".timer-row") || document);
+      var baseClass = btn.className;
+      var baseText = btn.textContent;
+      btn.addEventListener("click", function () {
+        if (btn._running) return;
+        btn._running = true;
+        btn.className = "btn btn-quiet";
+        btn.disabled = true;
+        var left = sec;
+        function tick() {
+          if (readout) readout.textContent = left + "s";
+          if (left <= 0) {
+            btn._running = false;
+            btn.disabled = false;
+            btn.className = baseClass;
+            btn.textContent = baseText;
+            if (readout) readout.textContent = "";
+            announce("Timer finished.");
+            showToast("Done. If the hold was calm, check the mastery criteria.");
+            return;
+          }
+          setTimeout(tick, 1000);
+          left--;
+        }
+        tick();
+      });
+    });
+  }
+
+  /* ---------- guided session ---------- */
+  var session = { i: 0, steps: [], slug: null, complete: false };
+
+  function sessionData() {
+    var el = $(".js-session-data");
+    if (!el) return null;
+    try { return JSON.parse(el.textContent); } catch (e) { return null; }
+  }
+
+  function openSession() {
+    var data = sessionData();
+    var dlg = $(".js-session-dialog");
+    if (!data || !dlg || typeof dlg.showModal !== "function") {
+      var stepsEl = $("#steps");
+      if (stepsEl) stepsEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    session.slug = data.slug || slug();
+    session.steps = data.steps || [];
+    var inf = info(session.slug);
+    var first = 0, allDone = true;
+    for (var i = 0; i < session.steps.length; i++) {
+      if (!(inf.s && inf.s[i])) { first = i; allDone = false; break; }
+    }
+    session.i = allDone ? 0 : first;
+    session.complete = allDone;
+    dlg.showModal();
+    renderSession();
+  }
+
+  function renderSession() {
+    var dlg = $(".js-session-dialog");
+    if (!dlg) return;
+    var bodyEl = $(".session-body", dlg);
+    var actions = $(".session-actions", dlg);
+    var completeEl = $(".js-session-complete", dlg);
+    var progress = $(".js-session-progress", dlg);
+    var count = $(".js-session-count", dlg);
+    var stepEl = $(".js-session-step", dlg);
+    var prev = $(".js-session-prev", dlg);
+    var next = $(".js-session-next", dlg);
+    var len = session.steps.length;
+
+    if (session.complete) {
+      if (bodyEl) bodyEl.hidden = true;
+      if (actions) actions.hidden = true;
+      if (completeEl) completeEl.hidden = false;
+      if (progress) progress.style.width = "100%";
+      if (count) count.textContent = len + " of " + len + " steps";
+      return;
+    }
+
+    if (bodyEl) bodyEl.hidden = false;
+    if (actions) actions.hidden = false;
+    if (completeEl) completeEl.hidden = true;
+    if (stepEl) stepEl.textContent = session.steps[session.i] || "";
+    if (count) count.textContent = "Step " + (session.i + 1) + " of " + len;
+    if (progress) progress.style.width = (len ? Math.round((session.i / len) * 100) : 0) + "%";
+    if (prev) prev.disabled = session.i === 0;
+    if (next) next.textContent = session.i === len - 1 ? "Finish" : "Next";
+  }
+
+  function sessionNext() {
+    if (!session.steps.length) return;
+    var inf = info(session.slug);
+    inf.s[session.i] = true;
+    var last = session.i === session.steps.length - 1;
+    save();
+    if (last) {
+      session.complete = true;
+      renderSession();
+      announce("Session complete.");
+    } else {
+      session.i++;
+      renderSession();
+    }
+  }
+
+  function sessionPrev() {
+    if (session.i > 0) { session.i--; renderSession(); }
+  }
+
+  function closeSession() {
+    var dlg = $(".js-session-dialog");
+    if (dlg && typeof dlg.close === "function") dlg.close();
+  }
+
+  /* ---------- data zone ---------- */
+  function exportState() {
+    var payload = JSON.stringify(state);
+    try {
+      var blob = new Blob([payload], { type: "application/json" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "pawsitive-start-backup-" + today() + ".json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+      showToast("Backup downloaded. Keep the file somewhere safe.");
+    } catch (e) {
+      try {
+        navigator.clipboard.writeText(payload);
+        showToast("Backup copied to your clipboard.");
+      } catch (e2) {
+        showToast("Saving is blocked in this browser.");
+      }
+    }
+  }
+
+  function openDialog(dlg) {
+    if (!dlg) return false;
+    if (typeof dlg.showModal === "function") { dlg.showModal(); return true; }
+    return false;
+  }
+
+  function applyImport(text) {
+    if (!text) return;
+    var parsed;
+    try { parsed = JSON.parse(text); } catch (e) { parsed = null; }
+    var next = normalize(parsed);
+    if (!next) {
+      showToast("That backup could not be read. Check the file and try again.");
+      return;
+    }
+    state = next;
+    save();
+    var dlg = $("#import-dialog");
+    if (dlg && typeof dlg.close === "function") dlg.close();
+    showToast("Backup imported.");
+    announce("Backup imported.");
+  }
+
+  function importState() {
+    var dlg = $("#import-dialog");
+    if (openDialog(dlg)) {
+      var file = $("#import-file");
+      var text = $("#import-text");
+      if (file) file.value = "";
+      if (text) text.value = "";
+      return;
+    }
+    var pasted = window.prompt("Paste your backup text:");
+    if (pasted) applyImport(pasted);
+  }
+
+  function confirmImport() {
+    var fileInput = $("#import-file");
+    var textArea = $("#import-text");
+    if (fileInput && fileInput.files && fileInput.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function () { applyImport(String(reader.result || "")); };
+      reader.readAsText(fileInput.files[0]);
+      return;
+    }
+    applyImport(textArea ? textArea.value : "");
+  }
+
+  function resetState() {
+    var dlg = $("#reset-dialog");
+    if (openDialog(dlg)) return;
+    if (!window.confirm("Reset all progress on this device? This cannot be undone.")) return;
+    doReset();
+  }
+
+  function doReset() {
+    rawRemove();
+    state = blank();
+    save();
+    var dlg = $("#reset-dialog");
+    if (dlg && typeof dlg.close === "function") dlg.close();
+    showToast("Progress reset.");
+    announce("All progress reset.");
+  }
+
+  /* ---------- install ---------- */
+  var deferredPrompt = null;
+
+  function isStandalone() {
+    return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+      window.navigator.standalone === true;
+  }
+
+  function renderInstall() {
+    var canInstall = !!deferredPrompt && !isStandalone();
+    $$(".js-install").forEach(function (btn) { btn.hidden = !canInstall; });
+    $$(".js-install-note").forEach(function (el) {
+      if (isStandalone()) el.textContent = "This app is already installed.";
+      else if (canInstall) el.textContent = "Install for full-screen, offline use.";
+      else el.textContent = "Use your browser menu: Share → Add to Home Screen on iPhone, or the menu → Install app on Android.";
+    });
+  }
+
+  function wireInstall() {
+    window.addEventListener("beforeinstallprompt", function (e) {
+      e.preventDefault();
+      deferredPrompt = e;
+      renderInstall();
+    });
+    window.addEventListener("appinstalled", function () {
+      deferredPrompt = null;
+      renderInstall();
+      showToast("Installed. Open it from your home screen.");
+    });
+    $$(".js-install").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function () {
+          deferredPrompt = null;
+          renderInstall();
+        });
+      });
+    });
+  }
+
+  /* ---------- service worker ---------- */
+  function registerServiceWorker() {
+    if (!("serviceWorker" in navigator)) return;
+    if (location.protocol !== "http:" && location.protocol !== "https:") return;
+    var swUrl = new URL(root + "sw.js", location.href);
+    var scope = new URL(root, location.href).pathname;
+    navigator.serviceWorker.register(swUrl.href, { scope: scope }).catch(function () {});
+  }
+
+  /* ---------- wiring ---------- */
+  function wire() {
+    $$(".js-step").forEach(function (input) {
+      input.addEventListener("change", function () {
+        var li = input.closest("li");
+        var i = li ? +li.getAttribute("data-i") : 0;
+        toggleItem(slug(), "s", i, input.checked);
+      });
+    });
+    $$(".js-crit").forEach(function (input) {
+      input.addEventListener("change", function () {
+        var li = input.closest("li");
+        var i = li ? +li.getAttribute("data-c") : 0;
+        toggleItem(slug(), "c", i, input.checked);
+      });
+    });
+    $$(".js-master").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        setMastered(slug(), !isMastered(slug()));
+        showToast(isMastered(slug()) ? "Mastered. Small wins add up." : "Back to practising. No rush.");
+      });
+    });
+    $$(".js-keepgoing").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        showToast("No rush. A short repeat tomorrow is enough.");
+      });
+    });
+    $$(".js-streak").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var t = today();
+        if (state.days.indexOf(t) === -1) {
+          state.days.push(t);
+          save();
+          announce("Practice day logged.");
+          showToast("Practice logged. Same time tomorrow.");
+        }
+      });
+    });
+
+    $$(".js-notes").forEach(function (ta) {
+      var note = $(".js-notes-saved", ta.closest(".notes-block") || document);
+      var timer = null, dirty = false;
+      function flush() {
+        if (!dirty) return;
+        dirty = false;
+        save();
+        if (note) note.textContent = "Saved";
+      }
+      ta.addEventListener("input", function () {
+        state.notes[slug()] = ta.value;
+        dirty = true;
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(flush, 500);
+      });
+      ta.addEventListener("blur", flush);
+      window.addEventListener("pagehide", flush);
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden) flush();
+      });
+    });
+
+    $$(".js-export").forEach(function (b) { b.addEventListener("click", exportState); });
+    $$(".js-import").forEach(function (b) { b.addEventListener("click", importState); });
+    $$(".js-import-confirm").forEach(function (b) { b.addEventListener("click", confirmImport); });
+    $$(".js-reset").forEach(function (b) { b.addEventListener("click", resetState); });
+    $$(".js-reset-confirm").forEach(function (b) { b.addEventListener("click", doReset); });
+    $$(".js-modal-close").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var dlg = b.closest("dialog");
+        if (dlg && typeof dlg.close === "function") dlg.close();
+      });
+    });
+    $$("dialog").forEach(function (dlg) {
+      dlg.addEventListener("click", function (e) {
+        if (e.target === dlg && typeof dlg.close === "function") dlg.close();
+      });
+    });
+
+    $$(".js-session-start").forEach(function (b) { b.addEventListener("click", openSession); });
+    $$(".js-session-close, .js-session-done").forEach(function (b) {
+      b.addEventListener("click", closeSession);
+    });
+    $$(".js-session-next").forEach(function (b) { b.addEventListener("click", sessionNext); });
+    $$(".js-session-prev").forEach(function (b) { b.addEventListener("click", sessionPrev); });
+    $$(".js-session-master").forEach(function (b) {
+      b.addEventListener("click", function () {
+        setMastered(slug(), true);
+        closeSession();
+        showToast("Mastered. Small wins add up.");
+      });
+    });
+    var sessionDialog = $(".js-session-dialog");
+    if (sessionDialog) {
+      sessionDialog.addEventListener("close", function () { session.complete = false; });
+    }
+
+    wireTimer();
+    wireInstall();
+    window.addEventListener("storage", function (e) {
+      if (e.key === KEY) { state = load(); render(); }
+    });
+  }
+
+  function init() {
+    wire();
+    render();
+    renderInstall();
+    registerServiceWorker();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
