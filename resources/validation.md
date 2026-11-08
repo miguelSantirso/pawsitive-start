@@ -1,72 +1,93 @@
 # Validation log — Pawsitive Start
 
-## Round 1 — build + browser walkthrough (2026-11-08)
-**Environment:** python3 http.server @127.0.0.1:8735; in-app Chromium; screenshots taken.
+## Round 1 — redesign foundation, app shell, PWA (2026-11-08)
+**Environment:** python3 http.server on 127.0.0.1; in-app Chromium; no Node/image tooling available.
 
-Data validation (`build/data.py`):
-- ✗ caught 4 exercises missing `trouble` → added (door-wait, sniffari, guest-doors, graduation-plan); re-run ✅ all 32 exercises valid
-- Compiler check across 6 stage files ✅
+**Design system**
+- Replaced the earlier card-heavy layout with a restrained Swiss-inspired system: warm paper, ink, one terracotta accent, muted earth stage colours, hairline rules, generous whitespace.
+- Mobile-first layout with a fixed bottom tab bar (Today / Course / Rules / Settings), safe-area padding, 48px controls and 56px tab targets.
+- Exercise pages use a focused layout: goal, primary “Start guided session”, steps first, secondary “why”/troubleshooting/notes collapsed.
+- Overall progress uses one continuous bar plus a ring; each stage keeps a segmented bar (4–6 exercises).
 
-Build & link check (`build/build.py`):
-- ✗ relative-path bugs on stage pages (`../exercises/…`) and exercise footnav → fixed to correct prefixes; internal link check now 40/40 ✅
-- ✗ generator omitted the `app.js` script tag → added with cache-bust querystring ✅
-- 40 pages generated: index, golden-rules, 6 stage pages, 32 exercise pages
+**Build & PWA**
+- `python3 build/data.py && python3 build/build.py` → validation OK, **33 exercises**, **43 pages** (index, course, golden-rules, settings, 6 stages, 33 exercises).
+- Generated `manifest.webmanifest` and `sw.js` with hash-based cache version and **52 precached URLs**.
+- Generated PNG icons with a dependency-free Python script: 180, 192, 512, maskable 512, plus `favicon.svg`.
+- Added `viewport-fit=cover`, theme colour, Apple touch icon, standalone display and offline shell.
+- Internal link check passes on every build.
 
-Browser walkthrough (JS progress engine):
-| Test | Result |
-|---|---|
-| First-run render: focus card = "Stage 1 · Build your dog's safe base", ring 0%, score 0/32, streak line copy | ✅ |
-| 7/7 progress labels populate (overall + 6 stages) | ✅ (after fixing sibling-label lookup) |
-| Ticking 3 steps → pill "● 3 of 6 steps", sub-bar 38% (3 of 8 items), state saved | ✅ |
-| Reload → state restored (checks, sub-bar, master label) | ✅ |
-| Note autosave → localStorage.notes | ✅ |
-| Mark mastered → panel swaps to Mastered ✓, all steps/criteria auto-tick | ✅ |
-| Focus auto-advances to next exercise (Stage 2 marker-word after Stage 1 complete), ring 13% | ✅ |
-| Stage page pills + stage banner on completion ("4 of 4 mastered") | ✅ |
-| Streak button → days logged, gentle copy "1 practice day in the last 7" | ✅ |
-| details.trouble: only first open by default; stage accent colors (s3=blue) verified | ✅ |
-| Console errors across pages | ✅ none |
-| localStorage cleared after testing (clean first run) | ✅ |
+**Progress engine**
+- `localStorage` key `pawsitive-start-v2`; step/criteria checks, notes, mastered flag, practice days and import/export all persist.
+- Guided session dialog, sticky mobile session bar, timers, install prompt and reset/import confirmations.
 
-**Screenshots:** home + mat-settle exercise page (full-page) captured in session.
+**Round 1 commit:** `7cbf4d4`
 
-## Round 2 — expert content review (CPDT-KA reviewer subagent) + fixes (2026-11-08)
-Reviewer examined all 7 data files. Verdict: *"safe and genuinely well-built for first-time shelter-dog adopters… Fix the P0 list and it's a course I'd hand to a new adopter."*
+## Round 2 — content accuracy, safety and tone (2026-11-08)
+Two independent content reviews (CPDT-KA-style reviewer and a safety/claims audit) examined all six stage files, the rules page, home copy and JS toasts. Both were applied before rebuilding.
 
-**P0 applied — 7/7 (safety/factual/contradiction):**
-- stage-4 street-loose-leash: step no longer licenses on-leash greetings to unknown dogs ("Sometimes we go there, sometimes we move on") — now consistent with calm-greet's "greetings are Stage-6 practice" rule
-- stage-6 car-calm: car food toy explicitly *separate* from the stage-5 departure toy (one toy can't be exclusive to two contexts); the 'up' cue is now taught inline at first use instead of being assumed
-- stage-4 leash-zen: the two garbled anti-correction lines rewritten to be readable — exactly where confusion matters most ("corrections make the leash a thing to brace against", "every step forward on a tight leash pays pulling better than any treat pays slack")
-- stage-4 street-loose-leash mistakes garbled safety line fixed; stage-3 mat-settle real-life step rebuilt to honor its own "one new thing at a time" rule
+**Safety / factual fixes (P0)**
+- Removed the water-restriction advice; replaced with vet-guided wording and hot-weather/medication caveats.
+- Rebuilt the alone-time ladder in small steps (1–20 minutes), removed the false “panic happens early” rationale, and added stop-and-get-help criteria.
+- Crate ladder now builds out-of-sight time explicitly and never closes the door while the dog is actively eating.
+- Bowl exercise renamed “Meals and chews without guarding”; added a pre-screen for freeze/stare/growl/snap/fast-eating, and the bowl is lifted one inch only, never removed.
+- Consent exercise no longer tells owners to touch a flinching dog; the dog must choose to close the gap.
+- Chin-rest contract clarified (chin stays in palm = continue; lifting = pause); mock exam and criteria aligned.
+- Loose-leash exercise no longer licenses pulling toward unknown dogs/people.
+- Graduation exercise now points to the real CGC test-items link instead of a checklist that was not on the page.
+- Completion timeline corrected: core stages 8–12 weeks; Stage 6 continues into months 3–6.
 
-**P1 applied — 24/24 (clarity/wording):** scatter-hand-feed why rewritten ("good things happen near this human — not just that people take things away"; over-precise "nose work lowers pulse" claim dropped), leave-it/trade boundary made explicit in food-leave-it, signal-spotting aligned with golden rules ("growling and snapping are the END of polite communication"), first-use definitions added ("lure", "threshold", "jackpot"), alone-staircase criteria tied to the video check, "first forty minutes" over-claim softened, rules-page jargon now explained ("flooding" → plain words)
+**Clarity / claims / tone (P1–P2)**
+- Removed overclaims (“guarding-proof”, “bite-free”, “days earlier”, “top lost-dog route”, “it melts”, “two or three clear leaps”, “one payout voids a week of work”).
+- Fixed contradictions: reward fading vs. “pay every time”, “no third call” vs. “one call”, food handling vs. “never remove, always trade”, head-on greeting advice, car-vet advice.
+- Aligned mastery criteria with the steps that actually teach them (sit duration/release, hand-target distance/second person, tail handling).
+- Replaced cutesy/overwrought copy (“fur-ball”, “Woof!”, “shark-hour”, “treat cafe”, “chauffeur of nothing”, “toppling grandmas”, “km of fear”).
+- Added a Stage 1 **First-week health & ID** callout: vet visit, shelter records/stool sample, parasite/heartworm/vaccination questions, microchip + visible ID, spay/neuter timing, common toxins.
+- Updated README page count to 43 and research brief to 33 exercises (added `gentle-mouth`).
 
-**P2 applied — 17/17 (polish) + both rescue-fit gaps closed:**
-- NEW exercise **gentle-mouth** (Stage 2, between consent-check and signal-spotting): the flagged mouthing/nipping gap — the stepped freeze-boring/toy-swap method; ASPCA source link fetched and verified before adding
-- Stage-1 safe-space now cross-references crate familiarization → Stage-5 ladder (alone-time worry starts day one)
-- Exercise counts 32 → **33**; home meta description now computed dynamically (`len(EXERCISES)`); README counts updated
+**Round 2 commit:** `8812c85`
 
-**Post-fix rebuild & smoke test:** data.py validation OK (33 exercises, manifest 33 slugs); 41 pages generated; internal link check OK. Browser spot-checks: home "0/33 mastered" + hero copy "33 little exercises"; stage-2 lists gentle-mouth in place; gentle-mouth page (6 steps / 2 criteria / 3 mistakes / verified ASPCA source); leash-zen + car-calm rewrites live; **zero console errors**; localStorage cleared for clean first run.
+## Round 3 — design polish, decoration removal, mobile/PWA verification (2026-11-08)
+**Container decoration**
+- Removed the thick coloured left/top border treatment from cards and callouts (goal, callouts, essentials card, today card, tab indicator).
+- Containers are now distinguished with subtle tonal surfaces, 1px hairline borders, spacing and typographic labels — no accent bars or decorative stripes.
 
-**Lighthouse on the new exercise page:** accessibility 1.0 · best-practices 1.0 · SEO 1.0.
+**Mobile layout audit (iframe viewports 300 / 360 / 390 px)**
+| Page | Horizontal overflow | Tab bar | Notes |
+|---|---|---|---|
+| index | none at all three widths | 56px targets | primary buttons 48px |
+| course | none | 56px | stage rows stack cleanly |
+| stage-1 | none | 56px | essentials card wraps |
+| exercise | none | n/a (focused layout) | step labels 81–160px tall; buttons 48px |
+| golden-rules | none | 56px | long source titles wrap |
+| settings | none | 56px | data actions stack under 520px |
 
-## Round 3 — final a11y/SEO audit + polish (2026-11-08)
-**Static audit of all 40 generated pages (custom script):** html lang ✓, exactly one h1 per page ✓, meta description ✓, every checkbox wrapped in a label ✓, external links rel="noopener" ✓, no http:// links ✓, no duplicate titles ✓, skip-link ✓, progressbar aria attrs ✓ → 0 issues.
+- Checkbox inputs are 24px visually but each is wrapped in a large clickable label; the full label is the tap target.
+- Dark and light palettes both checked by computed contrast; body/muted/button text all clear WCAG AA. Example ratios in dark mode: body 15.5:1, muted 7.85:1, primary button 6.78:1.
 
-**Lighthouse (in-app browser tool), before:** home 0.92 a11y / best-practices 1.0 / SEO 1.0; failures: `color-contrast`, `link-in-text-block`.
-- Root causes found by computing WCAG ratios across the whole design system:
-  - link `#c2540a` on cream bg = 4.24:1 (needs 4.5)
-  - muted `#6f6a61` on pill bg = 4.46:1
-  - stage-colored chip/step-number text on 12% tints = 3.07–4.37:1 for s1/s2/s3/s5/s6
+**Interaction walkthrough**
+- Ticking a step updates the step count and progress label immediately and saves to `localStorage`.
+- Guided session opens at the first unchecked step, not always step 1; Next advances correctly.
+- No console errors on home, course, stage, exercise, rules or settings pages.
 
-**Fixes (`site/assets/site.css`, cache-busted to `?v=3`):**
-- `--muted` → `#615b51` (worst-case 5.58:1 across all four backgrounds)
-- link color → `#a84c08` (5.23:1 on cream/white) + underline for links inside text blocks (satisfies link-in-text-block), list-title links excluded
-- amber accent text `#b45309` → `#8a4007` (≥6.70:1) in eyebrow/focus-top/pill.doing/rule-num/data buttons
-- chip + step numbers → `color-mix(in srgb, var(--sx) 80%, black)` (4.54–6.08:1 for all six stage colors instead of 3.07–4.75)
+**PWA / offline**
+- Service worker active and controlling the page; cache contains 52 URLs including `/index.html`, `/assets/site.css`, `/assets/app.js` and the manifest.
+- Manifest: `display: standalone`, `start_url: ./`, 192/512/maskable icons, theme colour and Apple touch icon present.
+- Viewport includes `viewport-fit=cover`; bottom bars respect `env(safe-area-inset-bottom)`.
 
-**Lighthouse, after (all four page types):** index / stage-1 / exercise / golden-rules → **a11y 1.0 · best-practices 1.0 · SEO 1.0**, zero failures. One intermediate fix en route: exercise pages' "Why this matters" callout `h3`→`h2` (definite heading order h1→h2; CSS selectors widened). Rebuilt 40 pages, link check OK.
+**Lighthouse (in-app browser)**
+| Page | Accessibility | Best practices | SEO |
+|---|---|---|---|
+| index | 1.0 | 1.0 | 1.0 |
+| stage-1 | 1.0 | 1.0 | 1.0 |
+| exercise | 1.0 | 1.0 | 1.0 |
+| golden-rules | 1.0 | 1.0 | 1.0 |
 
-**README.md** written (quick start, rebuild, layout, persistence, principles).
+- Fixed the only remaining failure (`aria-progressbar-name`) by giving every progress bar an explicit accessible name (“Overall course progress” / “Stage N progress”).
+- Zero Lighthouse failures and zero console errors in the final run.
 
-**Known limitation:** no device-emulation in this browser (screenshots have no width params; Lighthouse explicitly doesn't emulate mobile) — mobile relies on mobile-first CSS (breakpoints at 640/720px, single-column defaults, flexible rows); flagged for a manual phone check.
+**Known limitations**
+- The in-app browser has no device emulation; mobile checks used same-origin iframes at fixed widths plus computed layout/contrast measurements.
+- This model cannot view screenshots, so visual checks are DOM/computed-style based; the user can inspect the live tabs in the Review pane.
+- Icons are generated by pure Python because no image tooling is installed.
+
+**Round 3 commit:** see `git log` for the final commit.

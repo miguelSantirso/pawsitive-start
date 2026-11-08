@@ -212,6 +212,8 @@
       if (label) label.textContent = m + " of " + list.length + " mastered";
 
       el.setAttribute("role", "progressbar");
+      var dp = el.getAttribute("data-progress");
+      el.setAttribute("aria-label", dp === "all" ? "Overall course progress" : (dp ? "Stage " + dp + " progress" : "Progress"));
       el.setAttribute("aria-valuemin", "0");
       el.setAttribute("aria-valuemax", "100");
       el.setAttribute("aria-valuenow", String(pct));

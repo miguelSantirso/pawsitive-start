@@ -170,8 +170,8 @@ def shell(title, desc, P, body, page, colorclass="", subbar=False,
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="{BRAND}">
-<link rel="stylesheet" href="{P}assets/site.css?v=4">
-<script src="{P}assets/app.js?v=4" data-root="{P}" defer></script>
+<link rel="stylesheet" href="{P}assets/site.css?v=6">
+<script src="{P}assets/app.js?v=6" data-root="{P}" defer></script>
 {manifest_script()}
 {extra_head}
 </head>
