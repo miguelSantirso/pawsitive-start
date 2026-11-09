@@ -170,7 +170,7 @@ def shell(title, desc, P, body, page, colorclass="", subbar=False,
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="{BRAND}">
-<link rel="stylesheet" href="{P}assets/site.css?v=6">
+<link rel="stylesheet" href="{P}assets/site.css?v=7">
 <script src="{P}assets/app.js?v=6" data-root="{P}" defer></script>
 {manifest_script()}
 {extra_head}
@@ -221,6 +221,13 @@ def principles():
 
 # ---------------------------------------------------------------- Today
 def home_body():
+    # No-JS / pre-hydration fallback for the Today card: the first exercise.
+    # With JS on, renderToday() replaces this instantly; with JS off it stays
+    # true and useful instead of showing a spinner that never resolves.
+    first_row = EXERCISES[0]
+    first_ex, first_stage = first_row["ex"], first_row["stage"]
+    first_href = f'exercises/{first_ex["slug"]}.html'
+    first_meta = f'Stage {first_stage["num"]} · {esc(first_stage["name"])}'
     body = f'''
 <section class="home-head">
 <span class="kicker">For shelter &amp; rescue dog parents</span>
@@ -229,11 +236,11 @@ def home_body():
 </section>
 
 <section class="today-card js-focus" data-href="exercises/" aria-labelledby="today-title">
-<div class="today-top"><span class="kicker js-focus-kicker">Today's focus</span><span class="today-meta js-focus-meta">Loading…</span></div>
-<h2 class="today-title js-focus-title" id="today-title">Finding your next step…</h2>
-<p class="today-text js-focus-text">Your first exercise will appear here.</p>
+<div class="today-top"><span class="kicker js-focus-kicker">Today's focus</span><span class="today-meta js-focus-meta">{first_meta}</span></div>
+<h2 class="today-title js-focus-title" id="today-title">{esc(first_ex["title"])}</h2>
+<p class="today-text js-focus-text">{esc(first_ex["goal"])}</p>
 <div class="today-actions">
-<a class="btn btn-primary js-focus-link" href="exercises/safe-space.html">{svg("play")} <span class="js-focus-link-text">Start exercise</span></a>
+<a class="btn btn-primary js-focus-link" href="{first_href}">{svg("play")} <span class="js-focus-link-text">Start exercise</span></a>
 <a class="btn btn-quiet" href="course.html">See the full course</a>
 </div>
 </section>

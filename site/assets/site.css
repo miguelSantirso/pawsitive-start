@@ -168,7 +168,7 @@ main.shell.narrow { max-width: 760px; }
   color: var(--muted);
 }
 .lede {
-  font-size: 1.08rem;
+  font-size: 1.15rem;
   color: var(--muted);
   max-width: 62ch;
   margin: 0.8em 0;
@@ -210,6 +210,7 @@ main.shell.narrow { max-width: 760px; }
 }
 .brand {
   display: inline-flex; align-items: center; gap: 10px;
+  min-height: 44px;
   color: var(--ink); font-weight: 700; font-size: 1rem;
   text-decoration: none; flex: 0 0 auto;
 }
@@ -506,7 +507,11 @@ main.shell.narrow { max-width: 760px; }
   margin: 34px 0 8px;
 }
 .section-head h2 { margin: 0; font-size: 1.25rem; }
-.section-head a { font-size: 0.82rem; font-weight: 650; }
+.section-head a {
+  display: inline-flex; align-items: center;
+  min-height: 44px;
+  font-size: 0.82rem; font-weight: 650;
+}
 .section-note { color: var(--muted); font-size: 0.88rem; margin: 0 0 10px; }
 
 .stage-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
@@ -642,7 +647,7 @@ main.shell.narrow { max-width: 760px; }
   color: var(--muted); text-decoration: none;
 }
 .crumbs a:hover { color: var(--ink); text-decoration: underline; }
-.crumbs span { color: var(--line-strong); margin: 0 4px; }
+.crumbs span { color: var(--muted); margin: 0 4px; }
 
 .stage-hero { padding: 8px 0 0; }
 .stage-hero-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
@@ -693,7 +698,7 @@ main.shell.narrow { max-width: 760px; }
   margin: 0 0 4px;
 }
 .exercise-meta span + span::before {
-  content: "·"; margin: 0 9px; color: var(--line-strong);
+  content: "·"; margin: 0 9px; color: var(--muted);
 }
 .goal {
   margin: 22px 0 0;
@@ -701,7 +706,7 @@ main.shell.narrow { max-width: 760px; }
   background: var(--surface-2);
   border: 1px solid var(--line);
   border-radius: 9px;
-  font-size: 1.08rem; line-height: 1.5; font-weight: 500;
+  font-size: 1.15rem; line-height: 1.5; font-weight: 500;
 }
 .goal-label {
   display: block;
