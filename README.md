@@ -15,6 +15,45 @@ python3 -m http.server 8000
 ```
 No Node, no dependencies, no build tooling to install — Python 3.9+ is the only runtime.
 
+## Deploying (GitHub Pages)
+
+The site is live at **https://miguelsantirso.github.io/pawsitive-start/**
+source repo: `github.com/miguelSantirso/pawsitive-start`.
+
+- Deploys are automatic: every push to `main` runs `.github/workflows/deploy.yml`,
+  which publishes the contents of `site/` as a GitHub Pages artifact (~30s, no
+  npm/pip build step runs on CI — build locally first, commit the output).
+- Manual deploy: repo → Actions tab → "Deploy to GitHub Pages" → Run workflow.
+
+### Routine
+
+```bash
+cd build
+python3 data.py     # validate content; exits non-zero with a fix list
+python3 build.py    # regenerate site/ (+ link check)
+git add -A && git commit -m "..." && git push origin main   # auto-deploys
+```
+
+### Deploy troubleshooting (for future agents)
+
+- If a run fails in `actions/deploy-pages@v4` with
+  `Failed to create deployment (status: 404)`, Pages is not enabled on the repo
+  yet (e.g. brand-new repo). Enable it once with:
+  `gh api -X POST /repos/miguelSantirso/pawsitive-start/pages -f build_type=workflow`
+  then `gh run rerun <run-id>`. This is the GitHub Pages "Source: GitHub Actions"
+  mode; do not switch the repo to "Deploy from a branch" in settings.
+- After pushing, verify liveness: `curl -s -o /dev/null -w "%{http_code}\n"
+  https://miguelsantirso.github.io/pawsitive-start/` (expect 200).
+- Runbook notes: the site must stay subpath-safe. All asset/script paths are
+  relative (`../assets/site.css`, `data-root="../"` on the script tag);
+  `manifest.webmanifest` uses `start_url`/`scope: "./"`; the service worker URL
+  and scope are derived from `data-root` + `location.href` in
+  `site/assets/app.js`. A new absolute (`/...`) path or a repo rename breaks
+  this. Do not add absolute links.
+- Changing `app.js` or `site.css` requires bumping the `?v=` query strings in
+  the generated pages (see `build/build.py`) so the service-worker cache is
+  bypassed; the SW cache name constant also changes per build.
+
 ## Rebuilding the site
 
 The 43 HTML pages are generated from Python data modules:
@@ -34,6 +73,7 @@ python3 build.py     # writes index, golden-rules, 6 stage pages, 33 exercise pa
 
 ```
 pawsitive-start/
+├── .github/workflows/  # deploy.yml — auto-publishes site/ to GitHub Pages
 ├── build/            # generator + content data (edit these, then rebuild)
 ├── site/             # generated static site — deploy anything inside as-is
 │   ├── assets/       # site.css design system, app.js progress engine
