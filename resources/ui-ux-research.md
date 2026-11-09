@@ -75,3 +75,24 @@ Real checkboxes + labels; visible :focus-visible; contrast ≥4.5:1 text, ≥3:1
 - **Export/Import** JSON backup — converts "it's only on this device" into an upgrade.
 - First run: warm empty state, no fake seeded streaks.
 - Avoid "certificate"/"certified"/"lifetime access" claims we can't back.
+
+## 6. 2026 humanised-design trend research → v5 "cosy pass" (2026-11-09)
+
+Research question: make the v4 system feel human and cosy for pet lovers — without a redesign, and without adding noise or complexity on mobile. Sources: Creative Bloq, Digital Synopsis, Figma 2026 trends, Fontfabric, Malbar Design, Kota, Pantone COTY 2026 (Cloud Dancer), Vistaprint, morweb (humane-society site patterns), Squaresigns, Neel Networks (motion timing).
+
+**The 2026 meta-trend:** "Anti-AI crafting" — the marks of the maker become signal; the emotion lies in imperfection. For a pet brand, warmth is the cheapest differentiator to win.
+
+| 2026 technique | Effort | Mobile-safe | Verdict for this site |
+|---|---|---|---|
+| Hand-drawn marks in 1–2 strategic spots | Med | ✓ | **Adopted** — one squiggle underline in the home hero ("your new dog") |
+| Characterful display type + humanist sans body | Low | ✓ | **Adopted** — self-hosted Fraunces (with SOFT axis) for page-level headings, exercise goals, session steps, brand wordmark; body stays system sans (perf, offline PWA) |
+| One bold warm accent, not a dopamine rebrand | Low | ✓ | **Adopted** — terracotta pop `#c25a35` used exactly three ways: squiggle, focus ring, Today-card wash |
+| Rounded geometry + soft shadows | Low | ✓ | **Adopted** — radii +2–4px across the whole scale; whisper-soft warm-tinted card shadows |
+| Soft warm gradients as mood-setters | Low | ✓ | **Adopted** — 170° peach wash on the Today card, `color-mix` so dark mode follows automatically |
+| Squishy press states (compress, not bounce; 150–300 ms) | Low | ✓ | **Adopted** — `.btn:active { scale(0.97) }`; press feedback matters MORE on touch, where hover states don't exist |
+| Blob-cropped photos / mascots / scrapbook layers | Med–High | mixed | **Rejected for now** — the site has zero imagery; real pet photography is a content decision, not a style pass |
+| Liquid glass, neo-brutalism, glitch, dopamine neon | — | — | **Rejected** — contrast and overstimulation risks; wrong register for a trust-based care product |
+
+Palette moves: focus ring steel blue `#1f5f8b` → terracotta `#c25a35`; stage 4 slate `#3d5f73` → eucalyptus teal `#2e6f66` (terracotta + sage + teal is the 2026 warm trio, and keeps stage hues distinguishable); body stack drops "Inter" (the archetypal cold-UI font) in favour of the system sans; clinical uppercase kickers relax tracking 0.14em → 0.09em and recolour muted → clay.
+
+Deliberately NOT done (future steps if ever wanted): body-text webfont, paw mascot reacting in the mastery toast, real pet photography, pill-shaped buttons, footer microcopy additions (footer voice was already warm).

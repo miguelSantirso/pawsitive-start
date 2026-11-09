@@ -170,7 +170,8 @@ def shell(title, desc, P, body, page, colorclass="", subbar=False,
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="{BRAND}">
-<link rel="stylesheet" href="{P}assets/site.css?v=7">
+<link rel="preload" as="font" type="font/woff2" href="{P}assets/fonts/fraunces.woff2" crossorigin>
+<link rel="stylesheet" href="{P}assets/site.css?v=8">
 <script src="{P}assets/app.js?v=6" data-root="{P}" defer></script>
 {manifest_script()}
 {extra_head}
@@ -231,7 +232,7 @@ def home_body():
     body = f'''
 <section class="home-head">
 <span class="kicker">For shelter &amp; rescue dog parents</span>
-<h1>A calm start for your new dog.</h1>
+<h1>A calm start for <span class="squiggle">your new dog</span>.</h1>
 <p class="lede">A step-by-step course for the first weeks after adoption: six stages, {TOTAL} short exercises, a few calm minutes at a time. No account and no experience needed.</p>
 </section>
 
@@ -795,6 +796,7 @@ def main():
     precache = [
         "./", "index.html", "course.html", "golden-rules.html", "settings.html",
         "manifest.webmanifest", "assets/site.css", "assets/app.js",
+        "assets/fonts/fraunces.woff2",
         "assets/favicon.svg", "assets/icon-180.png", "assets/icon-192.png",
         "assets/icon-512.png", "assets/icon-maskable-512.png",
     ]
@@ -802,7 +804,7 @@ def main():
     precache += [f"exercises/{row['ex']['slug']}.html" for row in EXERCISES]
 
     digest = hashlib.sha1()
-    for rel in ["assets/site.css", "assets/app.js"] + [p for p, _ in pages]:
+    for rel in ["assets/site.css", "assets/app.js", "assets/fonts/fraunces.woff2"] + [p for p, _ in pages]:
         with open(os.path.join(SITE, rel), "rb") as f:
             digest.update(f.read())
     cache_name = "pawsitive-start-" + digest.hexdigest()[:10]

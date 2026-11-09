@@ -118,3 +118,40 @@ Two independent content reviews (CPDT-KA-style reviewer and a safety/claims audi
 **Known limitations**
 - This model cannot view images; visual verification is DOM/computed-style based. Final full-page screenshots of home and an exercise page were captured and previewed for the user to eyeball in the Review pane.
 
+## Round 5 — v5 "cosy pass": humanised warmth (2026-11-09)
+
+**Method.** Web-researched 2026 humanised-design trends (subagent brief, distilled into `ui-ux-research.md` §6); applied a token-layer pass — no layout changes, no new UI elements except one decorative `<span>`; verified by rebuild, computed-style DOM checks, WCAG math and Lighthouse.
+
+**Changes**
+- **Display voice:** self-hosted Fraunces latin variable (400–700 + SOFT axis, ~118 KB, SIL OFL, license file shipped alongside) for `h1`/`h2`, Today title, guided-session steps, exercise goals and the brand wordmark. Micro-labels (`kicker`-style) explicitly forced back to the sans stack via `--font-ui` so labels stay UI and only the *voice* is serif.
+- **Warmth:** new `--accent-bold` terracotta `#c25a35` (light) / `#e8905f` (dark) powering the hand-drawn squiggle, the focus ring and a 170° gradient wash on the Today card; kickers recoloured muted → clay with tracking 0.14em → 0.09em.
+- **Cold outliers:** focus ring `#1f5f8b` → terracotta; stage 4 `#3d5f73` → eucalyptus `#2e6f66` (light) / `#8fc6ba` (dark).
+- **Geometry:** radii 5/6/8/9px → 7/8/10/12px, `--radius` 12→14, `--radius-lg` 16→20; new `--shadow-soft` warm card shadows on card / course-stage / exercise-list / master / progress / settings cards; print shadow-reset extended to match (and the dead `.stage-card` selector, matching nothing since v4, removed from it).
+- **Tactility:** `.btn:active` translateY(1px) → scale(0.97) (compress-not-bounce; touch-visible); removed the `border-radius: 4px` side-effect on `:focus-visible` so focus outlines follow each component's own shape.
+- **Hero:** "A calm start for *your new dog*." carries a hand-drawn SVG squiggle underline (data-URI background, dark-mode variant via token).
+- **Build:** CSS `?v=7` → `?v=8`, font `<link rel="preload">`, font added to SW precache (52 → **53 URLs**) and to the cache digest; cache `pawsitive-start-e7ab7c2cc9` (two consecutive builds byte-identical).
+
+**Contrast (computed WCAG ratios)**
+| Pair | Ratio | Need |
+|---|---|---|
+| focus ring #c25a35 vs paper (light) | 3.92:1 | ≥3 ✓ |
+| focus ring #e8905f vs paper (dark) | 7.45:1 | ≥3 ✓ |
+| kicker #7f3618 vs paper (light) | 7.71:1 | ≥4.5 ✓ |
+| kicker #f0b08e vs paper (dark) | 9.81:1 | ≥4.5 ✓ |
+| stage-4 chip text vs 9% bg (light / dark) | 5.05:1 / 7.27:1 | ≥4.5 ✓ |
+| stage-4 ex-num text vs 8% bg | 5.14:1 | ≥4.5 ✓ |
+| stage-4 subbar fill vs track | 4.12:1 | ≥3 ✓ |
+| hero ink vs gradient wash | 14.48:1 | ≥4.5 ✓ |
+| primary button (unchanged) | 5.68:1 | ≥4.5 ✓ |
+
+**Browser verification (in-app Chromium over http.server)**
+- `document.fonts.check("600 32px Fraunces")` = true; h1/h2/.goal/.session-step/brand wordmark resolve to Fraunces 600; `.goal-label`, `.callout h2/h3`, `.essentials-card h2`, `.kicker` resolve to the sans stack; squiggle background-image applied at 100% × 0.3em.
+- Stage 4 renders eucalyptus teal through chips / stage-index / ex-num; Today card shows the `linear-gradient(170deg, color-mix(...))` wash; buttons 12px; cards carry `--shadow-soft`.
+- Mobile (same-origin 390px iframe — no device emulation available): bottom tab bar active, h1 32px wrapping to 2 lines with the squiggle intact, action buttons full-width, no horizontal overflow, zero console errors on home / stage / exercise.
+- Lighthouse on index after the pass: **Accessibility 1.0 · Best practices 1.0 · SEO 1.0**, zero failures.
+- Gotcha logged: after editing CSS between rebuilds, the tab briefly served the old SW precache until the service worker updated. Local-testing artefact only — production is covered by the `?v=` bump plus the hash-derived cache name.
+
+**Known limitations** — as Round 4: no image viewing (DOM/computed-style verification; screenshots captured and previewed for the user), no device emulation (iframe widths), and this round dark mode was verified by contrast math + token parity rather than rendered screenshots.
+
+**Independent review (post-change).** A separate reviewer audited the full diff against 10 invariants — token parity, cold hues eliminated, cache busting, subpath safety, radius migration, accessibility (disabled/reduced-motion/focus), print coverage, build determinism, typography scope, assets & licensing — 9 PASS. Its single finding: `sw.js` carried a cache name derived before the final CSS comment edit (build not re-run after the last tweak). Fixed by the final rebuild; consecutive builds are now byte-identical and the cache name above is the reproducible one. The dead `.stage-card` print selector it flagged was also removed.
+
