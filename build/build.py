@@ -28,8 +28,8 @@ TOTAL = len(EXERCISES)
 # exact versioned URLs, and the service-worker precache must list the same
 # ones (caches.match is exact-match, query string included) or the offline
 # precache misses. Bump both whenever site.css / app.js change.
-CSS_V = 34
-JS_V = 32
+CSS_V = 35
+JS_V = 33
 EX_BY_SLUG = {row["ex"]["slug"]: row for row in EXERCISES}
 TAG_LABELS = {
     "calm": "Calm",
@@ -344,15 +344,6 @@ def home_body():
 <p class="lede">A step-by-step course for the first weeks after adoption: six stages, {TOTAL} short exercises, a few calm minutes at a time. No account and no experience needed.</p>
 </section>
 
-<section class="welcome-strip js-welcome-strip" aria-label="Welcome back" hidden>
-<div class="ring" data-progress="all"><span class="hole"></span><span class="ring-num js-ring-num">0%</span></div>
-<div class="strip-copy">
-<p class="strip-line"><span class="js-strip-stage">Stage 1</span> · <span class="js-strip-mastered js-score">0/{TOTAL} mastered</span> · <span class="js-strip-days">0 practice days this week</span></p>
-<p class="strip-sub"><span class="js-strip-save strip-save">Saved on this device ✓</span> · <a href="golden-rules.html">Rules</a></p>
-</div>
-<a class="strip-link" href="course.html" aria-label="Course overview"><span>Course overview</span>{svg("chevron-right")}</a>
-</section>
-
 <section class="today-card js-focus" data-href="exercises/" aria-labelledby="today-title">
 <div class="today-top"><span class="kicker js-focus-kicker">Today's focus</span><span class="today-meta js-focus-meta">{first_meta}</span></div>
 <h2 class="today-title js-focus-title" id="today-title">{esc(first_ex["title"])}</h2>
@@ -392,16 +383,6 @@ def home_body():
 </section>
 </div>
 {tip_script()}
-
-<section class="progress-panel home-progress" id="progress" aria-labelledby="progress-h">
-<div class="ring" data-progress="all"><span class="hole"></span><span class="ring-num js-ring-num">0%</span></div>
-<div class="progress-copy">
-<h2 id="progress-h" class="kicker">Your progress</h2>
-<p class="score-line js-score">0/{TOTAL} mastered</p>
-<div class="progress-row"><div class="progress" data-progress="all"><div class="progress-fill js-fill"></div></div><span class="progress-label js-prog-label"></span></div>
-<p class="small">The core stages take most owners 8–12 weeks; Stage 6 continues into months 3–6. Plan for a few short sessions a day plus walks — not a strict ten-minute clock.</p>
-</div>
-</section>
 
 <div class="practice-row">
 <button type="button" class="btn btn-quiet js-streak">I practised today</button>

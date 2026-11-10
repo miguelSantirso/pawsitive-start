@@ -535,18 +535,13 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
 .today-card {
   position: relative;
   margin: 26px 0 18px;
-  padding: 24px;
-  background: linear-gradient(
-    170deg,
-    color-mix(in srgb, var(--accent-bold) 9%, var(--surface)),
-    color-mix(in srgb, var(--accent-bold) 3%, var(--surface)) 48%,
-    var(--surface)
-  );
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
-.today-card.is-done { background: color-mix(in srgb, var(--ok) 7%, var(--surface)); }
+.today-card.is-done { background: none; }
 .today-top {
   display: flex; justify-content: space-between; align-items: baseline;
   gap: 8px 16px; flex-wrap: wrap;
@@ -560,7 +555,6 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
 .today-text { color: var(--muted); max-width: 62ch; margin: 0; }
 .today-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
 @media (max-width: 520px) {
-  .today-card { padding: 20px 18px; }
   .today-actions .btn { flex: 1 1 100%; }
 }
 

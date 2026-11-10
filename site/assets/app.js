@@ -440,12 +440,12 @@
   }
 
   function renderHomeMode() {
+    if (document.body.getAttribute("data-page") !== "home") return;
     var strip = $(".js-welcome-strip");
-    if (!strip || document.body.getAttribute("data-page") !== "home") return;
     var returning = hasProgress();
     if (returning) document.documentElement.setAttribute("data-home", "returning");
     else document.documentElement.removeAttribute("data-home");
-    strip.hidden = !returning;
+    if (strip) strip.hidden = !returning;
     if (!returning) return;
 
     var nxt = nextUp();
