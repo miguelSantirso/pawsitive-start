@@ -1,12 +1,15 @@
 /* ============================================================
-   Pawsitive Start — progress engine v4
-   Persistence: localStorage key "pawsitive-start-v2" (versioned)
+   Pawsitive Start — progress engine (Round 6)
+   Persistence: localStorage key "pawsitive-start-v2" (schema v: 1, additive only)
    Every page includes <script>window.PS = {...manifest}</script>:
      PS.slugs  : [slug, ...] in curriculum order
      PS.stages : { "1": {n, e, w}, ... }
      PS.ex     : { slug: { t, g, st, s, cr, f, core } }
        f    : first tag (calm / leash / alone-time / home-life / bonding / handling)
-       core : false only for supporting exercises that can wait
+       core : false only for supporting exercises that can wait;
+              the Today-card alternative chips prefer core over supporting ones
+              (within the same stage, returning users only)
+   Tip-of-the-day data: index.html only (<script class="js-tip-data">), not PS.
    Exercise pages: <body data-page="exercise" data-slug="...">
    ============================================================ */
 (function () {
@@ -117,6 +120,9 @@
     return state.ex[sg];
   }
   function isMastered(sg) { return !!(state.ex[sg] && state.ex[sg].m); }
+  /* WP4: core exercises are the essentials; supporting ones can wait. The
+     manifest defaults core to true, so only an explicit false is supporting. */
+  function isCore(sg) { var m = exMeta(sg); return !(m && m.core === false); }
   function countTrue(arr) { var n = 0; for (var i = 0; i < arr.length; i++) if (arr[i]) n++; return n; }
   /* True only when real progress exists: savedAt is written by every save
      (including reset), and info() creates empty per-exercise records in
@@ -504,15 +510,24 @@
   }
 
   /* Up to two alternatives from the recommended exercise's stage. Returning
-     users only, so the first-run home stays exactly as it was. */
+     users only, so the first-run home stays exactly as it was. Core
+     exercises are preferred over supporting ones (the WP4 `core` flag);
+     curriculum order is kept within each group, and nothing is ever locked. */
   function renderTodayAlternatives(card, alt, sg, stage) {
     if (!alt) return;
     var chips = $(".js-focus-alt-chips", alt);
     if (!chips) return;
     if (!hasProgress()) { alt.hidden = true; return; }
-    var list = slugs().filter(function (s) {
+    var all = slugs();
+    var order = {};
+    all.forEach(function (s, i) { order[s] = i; });
+    var list = all.filter(function (s) {
       return s !== sg && !isMastered(s) && stageOf(s) === String(stage);
-    }).slice(0, 2);
+    });
+    list.sort(function (a, b) {
+      return (isCore(a) ? 0 : 1) - (isCore(b) ? 0 : 1) || order[a] - order[b];
+    });
+    list = list.slice(0, 2);
     if (!list.length) { alt.hidden = true; return; }
     chips.innerHTML = "";
     list.forEach(function (s) {
@@ -559,12 +574,21 @@
     announce(s ? "Starting suggestion set to Stage " + s + "." : "Starting at the beginning of the course.");
   }
 
+  /* WP2 tip of the day. WP6: the .js-tip-slot wrapper around the card
+     reserves the card's space before hydration (keyed off data-home in
+     site.css), so revealing the card doesn't shift the page. Whenever no tip
+     is shown the whole slot collapses so no blank space is left behind. */
   function renderTip() {
     var card = $(".js-tip");
     if (!card || document.body.getAttribute("data-page") !== "home") return;
+    var slot = $(".js-tip-slot") || card;
+    function hideTip() {
+      card.hidden = true;
+      slot.hidden = true;
+    }
     var data = tipData();
     if (!data || !data.length || !hasProgress()) {
-      card.hidden = true;
+      hideTip();
       return;
     }
 
@@ -577,7 +601,7 @@
 
     var tip = pool[dayNumber() % pool.length];
     if (!tip) {
-      card.hidden = true;
+      hideTip();
       return;
     }
     var text = $(".js-tip-text", card);
@@ -587,6 +611,7 @@
       link.setAttribute("href", tip.ref);
     }
     card.hidden = false;
+    slot.hidden = false;
   }
 
   function tipData() {

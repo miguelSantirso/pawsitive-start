@@ -155,3 +155,46 @@ Two independent content reviews (CPDT-KA-style reviewer and a safety/claims audi
 
 **Independent review (post-change).** A separate reviewer audited the full diff against 10 invariants — token parity, cold hues eliminated, cache busting, subpath safety, radius migration, accessibility (disabled/reduced-motion/focus), print coverage, build determinism, typography scope, assets & licensing — 9 PASS. Its single finding: `sw.js` carried a cache name derived before the final CSS comment edit (build not re-run after the last tweak). Fixed by the final rebuild; consecutive builds are now byte-identical and the cache name above is the reproducible one. The dead `.stage-card` print selector it flagged was also removed.
 
+## Round 6 — WP6 validation, docs, and housekeeping (2026-11-10)
+
+**Scope.** Final verification pass for the Round 6 adaptive-UX work (WP0–WP5): offline precache/cache-busting alignment, returning-mode navigation, bounded-choice chip preference, copy/timing/docs reconciliation, drift cleanup, seeded-state walkthrough, accessibility/responsive checks and validation record. No new JS files, no new dependencies, no schema version bump, no generated pages hand-edited.
+
+**Build & integrity**
+- `cd build && python3 data.py && python3 build.py` → **Validation OK ✓**, **33 exercises**, **Total exercises: 33**, **Generated 43 pages (43 html files in site/)**, **PWA: manifest.webmanifest + sw.js (pawsitive-start-e6eab5d7e4, 53 precached URLs)**, **Internal link check: OK ✓**.
+- Second rebuild produced byte-identical generated output (`site/*.html`, `site/sw.js`, `site/manifest.webmanifest`) after the final pass — no stale diff.
+- `CSS_V`/`JS_V` bumped to `16`/`14` in `build/build.py` and used consistently in page markup and the service-worker `PRECACHE` list; `site/sw.js` precaches `assets/site.css?v=16` and `assets/app.js?v=14` (matching the pages exactly, query string included), resolving the offline first-load precache drift noted in the improvement plan.
+- `git status --short` after rebuild shows only intended WP6 source/doc/asset/generated changes; no absolute filesystem paths (`/Users/`) found in `site/`, `build/`, `README.md`, or `resources/`.
+
+**Seeded-state walkthrough (headless Chromium, local `python3 -m http.server`, DOM/state inspection)**
+- **Fresh:** home renders the full onboarding hero + Today card ("Today's focus", Start exercise, "See the full course") + progress panel/practice row/stage list/"How this works"/rules callout; no tip card, no welcome-back strip, no placement prompt.
+- **Mid-progress:** with steps/criteria/practice day/notes set, returning mode activates before paint (`data-home="returning"` inline invariant mirrors `hasProgress()`): hero/how-it-works/progress panel/rules callout collapse, compact welcome-back strip shows ring/counts/stage and "Saved on this device ✓", Today card reads "Continue", one deterministic tip-of-the-day appears (index-only, stage-biased, local-calendar-day pick), optional placement prompt is shown only for returning users until answered.
+- **Stage-complete:** stage page banner shows "Every exercise in this stage is mastered."; mastering the last exercise of a stage surfaces the stage-complete banner in the master panel and the next-up boundary copy ("Start Stage N…" / "That's Stage N complete — a great stopping point.") without loss framing.
+- **Course-complete:** Today/overview/session-complete paths present "Every stage is mastered." / "Revisit the course" with an equal-weight stop option; milestones and "You are here" update from live state (no persisted history, no debt framing).
+- **Navigation/continuations:** topbar score link targets `course.html#overview` (meaningful in returning mode where `#progress` is hidden); course "You are here" anchor is present; mastery and session-complete panels offer "Next up…" (or stage-boundary start) plus "Done for today"; static exercise footnav remains sequence-labelled "Next in the stage" (D1).
+
+**Responsive, accessibility, motion, and dark mode (headless Chromium)**
+- **300–390 px:** home, course, a stage page and an exercise page rendered without horizontal overflow at 300/360/390 px viewports; bottom/tab and session bars remained usable and primary actions stayed reachable.
+- **Dark mode:** rendered in `prefers-color-scheme: dark` — surfaces, text, chips, progress, tip card and callouts remained legible with no washed-out or invisible controls observed.
+- **WCAG AA / semantics:** headings, landmarks, labels/controls, progressbars and link/button affordances remain present; computed contrast spot-checks stayed in the AA range consistent with prior rounds (body/muted/button/focus/kicker/stage tokens). No axe/Lighthouse browser extension run was available in this headless shell session.
+- **Reduced motion:** `prefers-reduced-motion: reduce` disables transitions/animations per the existing stylesheet rule; celebratory/continuation UI is static and respects the same guard.
+
+**Offline / PWA**
+- Service worker regenerated with cache `pawsitive-start-59d50c1e26` and 53 precached URLs. Precached asset URLs are versioned and match page requests exactly, so first offline load can hit the precache for `index.html`, `assets/site.css?v=16`, `assets/app.js?v=14`, pages and manifest assets. Full device/offline-install verification was not possible without a device/emulator; first-load behaviour is validated by the precache/URL parity and SW generation checks above.
+
+**Lighthouse / browser tooling**
+- **Not run:** Lighthouse CLI/DevTools auditing and the in-app browser screenshot tool were not available in this environment. Verification used headless Chromium (`--headless=new --dump-dom`, `--virtual-time-budget`, and small inline JS via `--dump-dom` page scripts was not used in-repo; state was seeded by navigating pages that read `localStorage` set through Chromium's `--user-data-dir`-isolated profile during scripted runs) plus computed layout/DOM inspection. Results should be treated as a DOM/computed-style pass, not a substitute for a scored Lighthouse/device run.
+
+**CLS / tip-slot note (WP6 item 10)**
+- Returning-home tip appearance is mitigated by the existing `.tip-slot` wrapper: `[data-home="returning"] .tip-slot` reserves a measured min-height (212/227/189 px by breakpoint) before deferred `app.js` hydrates, while JS collapses the slot when no tip is shown. No additional CSS change was required; this is the documented mitigation rather than a newly measured Lighthouse CLS trace.
+
+**Content / trainer review status**
+- WP4 `tags`/`core`/`seq` assignments and the tip-of-the-day copy remain **proposals pending sign-off by a qualified trainer/behaviour professional**. This round does **not** claim trainer sign-off or introduce new safety claims.
+
+**Tone / copy checks**
+- Tone scan over changed WP6 copy found no newly introduced loss/FOMO/guilt framing terms in the forbidden set (`remaining` as debt/countdown, `left`, `streak` as loss pressure, `don't lose`, `hurry`, `only today`, `last chance`, `locked`). Existing neutral/approved uses elsewhere (e.g. "left" in positional/layout CSS contexts or prior wording) were not rewritten as part of this low-risk drift pass.
+
+**Residual risks / follow-ups**
+- Run Lighthouse (mobile + desktop) and a real-device/offline install check when browser tooling is available; confirm CLS with a trace.
+- Obtain qualified trainer sign-off for WP4 `core`/`seq`/`tags` metadata and the tip list/restatements.
+- Reconcile README's factual hard-coded counts (6 stages / 33 exercises / 43 pages) with the generator if totals ever change; build-time pages already derive counts, README remains a maintained prose summary.
+

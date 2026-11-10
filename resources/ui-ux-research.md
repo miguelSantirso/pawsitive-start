@@ -60,7 +60,7 @@
 - Streak = consecutive days with any step/criteria check; also show "days in last 7"; lapse never shown as loss; copy: "Took a break? Dogs forget too — quick refresher picks right up."
 
 ### Microcopy bank (adopted)
-"Small steps, big tail wags." · "Today's 5-minute win:" · "No progress yet — that's just day one." · "3 of 5 mastered" · "Mark as mastered ✓" · "Not quite yet — keep practicing (no rush)" · "Woof! That's the whole stage. 🎉" · "5 practice days in the last 7 — consistency beats intensity." · "Saved ✓" · "Picking up where you left off?" · "If it's not clicking, try this:" · "~30 exercises · most owners finish in 6–8 weeks with 10 minutes a day."
+"Small steps, big tail wags." · "Today's 5-minute win:" · "No progress yet — that's just day one." · "3 of 5 mastered" · "Mark as mastered ✓" · "Not quite yet — keep practicing (no rush)" · "Woof! That's the whole stage. 🎉" · "5 practice days in the last 7 — consistency beats intensity." · "Saved ✓" · "Picking up where you left off?" · "If it's not clicking, try this:" · "~33 exercises · core stages take most owners 8–12 weeks, a few calm minutes at a time — not a strict clock."
 
 ### Accessibility must-dos
 Real checkboxes + labels; visible :focus-visible; contrast ≥4.5:1 text, ≥3:1 fills; ≥44×44 targets; prefers-reduced-motion kills animations; aria-live="polite" announcements for step/mastery changes; skip-link; single h1; stage names as h2s; exercise lists as ol; mobile-first design at 360–390px; bottom-anchored CTA; 16px body/1.5 line-height.
@@ -96,3 +96,16 @@ Research question: make the v4 system feel human and cosy for pet lovers — wit
 Palette moves: focus ring steel blue `#1f5f8b` → terracotta `#c25a35`; stage 4 slate `#3d5f73` → eucalyptus teal `#2e6f66` (terracotta + sage + teal is the 2026 warm trio, and keeps stage hues distinguishable); body stack drops "Inter" (the archetypal cold-UI font) in favour of the system sans; clinical uppercase kickers relax tracking 0.14em → 0.09em and recolour muted → clay.
 
 Deliberately NOT done (future steps if ever wanted): body-text webfont, paw mascot reacting in the mastery toast, real pet photography, pill-shaped buttons, footer microcopy additions (footer voice was already warm).
+
+## 7. Round 6 patterns — adaptive home, bounded choice, goal-gradient (2026-11-10)
+
+Patterns added by the returning-user UX round (implementation in `resources/improvement-plan.md`). Each keeps the anti-patterns in §1–5 out: no locks, no debt framing, no FOMO, "stop here" always first-class.
+
+- **Adaptive empty-state vs returning-state home.** The onboarding hero is an empty-state treatment, not permanent chrome: once real progress exists, it collapses into a compact "welcome back" strip (ring + counts + storage honesty, which stays in the hero area per §5). The returning home keeps exactly one tall block (the Today card) — the Headspace one-item principle in §2 — with everything else secondary. The empty state is fully preserved for first-run and no-JS users.
+- **Bounded choice, not free choice.** Under the recommended next exercise, at most two same-stage alternatives ("Also good today"), core exercises preferred over supporting ones within the stage. Cap at two (Hick's law); nothing hidden, nothing locked. Free ordering is the documented anti-pattern (Duolingo tree→path); a single linear path is the other extreme — two chips is the deliberate middle.
+- **Goal-gradient without debt framing.** Course milestones and the "you are here" overview give the earned-progress visibility of an achievements screen without the anti-patterns: no badge wall (no per-exercise awards), no points, no time-limited or comparative awards, no counts that go down on undo. Milestones are computed live from state, not persisted history. Language: "done", "next up", "not started yet" — never "remaining".
+- **Next-action success states.** Mastery moments never dead-end: the master panel and the session-complete panel both offer "Next up: …" (or "Start Stage N" at a boundary) with an equal-weight "Done for today". One definition of "next" everywhere (first unmastered in curriculum order); the static sequence footnav is explicitly labelled "Next in the stage" so the two can't read as disagreeing.
+- **Self-placement, never auto-placement.** An optional, editable, one-question starting point ("Where is your dog right now?"), asked softly once progress exists — never at first open — and never hiding safety content. Calendar-based inference stays rejected (§5): the 3-3-3 clock varies per dog.
+- **Tip of the day.** One deterministic tip per local calendar day (no state, works offline), stage-biased, always phrased "try / good to know" — never "you missed / you should have". Returning-only, and it replaces home content rather than stacking on it.
+
+Deliberately NOT done (rejected, see §5 of the improvement plan): full free ordering / plan builder, badge walls, activity-ring clones, auto-advance nudges, a fifth bottom tab, hard locks anywhere.

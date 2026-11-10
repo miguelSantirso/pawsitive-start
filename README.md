@@ -1,6 +1,6 @@
 # 🐾 Pawsitive Start
 
-A free, no-account website that guides **new dog owners who just adopted from a shelter or rescue** through educating and training their dog — as a course of **6 stages and 33 short exercises**, about 10 minutes a day.
+A free, no-account website that guides **new dog owners who just adopted from a shelter or rescue** through educating and training their dog — as a course of **6 stages and 33 short exercises**, a few calm minutes a day (not a strict clock).
 
 ## Quick start
 
@@ -50,9 +50,10 @@ git add -A && git commit -m "..." && git push origin main   # auto-deploys
   and scope are derived from `data-root` + `location.href` in
   `site/assets/app.js`. A new absolute (`/...`) path or a repo rename breaks
   this. Do not add absolute links.
-- Changing `app.js` or `site.css` requires bumping the `?v=` query strings in
-  the generated pages (see `build/build.py`) so the service-worker cache is
-  bypassed; the SW cache name constant also changes per build.
+- Changing `app.js` or `site.css` requires bumping the `CSS_V` / `JS_V` constants
+  in `build/build.py` (they feed both the `?v=` query strings in the generated
+  pages and the service-worker precache list, which must match exactly);
+  the SW cache name constant also changes per build.
 
 ## Rebuilding the site
 
@@ -86,10 +87,20 @@ pawsitive-start/
 
 ## How progress tracking works
 
-- All state is stored in the browser's `localStorage` (key `pawsitive-start-v2`) — no account, no server, nothing leaves the device.
+- All state is stored in the browser's `localStorage` (key `pawsitive-start-v2`, schema `v: 1`) — no account, no server, nothing leaves the device.
 - Per exercise: step checkboxes, mastery-criteria checkboxes, "mastered" flag, notes, timers.
 - Global: overall % ring, per-stage segmented bars, guilt-free practice-day streak, and **Export / Import backup** buttons in the footer for moving between devices.
 - Clearing your browser data resets the course. There's also a "Reset progress…" button in the footer.
+
+### Round 6 — adaptive returning-user behaviour
+
+The home page and completion flows adapt at runtime to saved progress; every page stays fully static and no-JS still works.
+
+- **Adaptive home.** With no progress, home shows the full onboarding hero. Once any progress exists (a checked step or criterion, a mastered exercise, a note, or a practice day), the hero collapses into a one-line "welcome back" strip (ring, counts, "Saved on this device ✓"). The check runs in a tiny inline script in `index.html` before first paint to avoid a flash, and mirrors `hasProgress()` in `app.js` (a documented validation invariant).
+- **Tip of the day.** Also returning-only: one short tip per local calendar day, picked deterministically from `build/data_rules.py` (`TIPS`), biased toward the user's current stage and linking to its source anchor on the golden-rules page. Tip data is injected into `index.html` only (not the shared `window.PS` manifest).
+- **Course overview.** `course.html` doubles as the "you are here" map: overall ring, current stage, per-stage "next up" links, an overlapping-stage timeline, and live milestones (no badge wall, no counts that frame undone work as debt). The topbar score link points here.
+- **Next up after mastery.** Marking an exercise mastered offers "Next up: …" (or "Start Stage N" at a stage boundary) plus an equal-weight "Done for today". The static exercise footnav stays sequence order and is labelled "Next in the stage".
+- **Optional self-placement.** A skippable "Where is your dog right now?" prompt (home, once, only after progress exists) and the same control in Settings offsets the suggested starting point. It is stored locally (`focus`), never hides Stage 1 content, and never locks anything.
 
 ## Content principles
 

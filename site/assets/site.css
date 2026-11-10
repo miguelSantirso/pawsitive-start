@@ -183,7 +183,6 @@ img, svg { max-width: 100%; }
   margin-inline: auto;
 }
 main.shell { padding-top: 28px; padding-bottom: 72px; }
-main.shell.narrow { max-width: 760px; }
 @media (max-width: 520px) {
   .shell { width: calc(100% - 32px); }
   main.shell { padding-top: 20px; }
@@ -367,8 +366,6 @@ main.shell.narrow { max-width: 760px; }
   border-color: color-mix(in srgb, var(--warn) 40%, var(--line));
 }
 .btn-danger:hover { background: var(--warn-soft); color: var(--warn); }
-.btn-big { padding: 14px 24px; font-size: 1rem; }
-.btn-block { width: 100%; }
 .btn[disabled] { opacity: 0.55; cursor: default; transform: none; }
 .icon-btn {
   display: inline-grid; place-items: center;
@@ -381,14 +378,6 @@ main.shell.narrow { max-width: 760px; }
 .icon-btn svg { width: 22px; height: 22px; }
 
 /* ---------- cards, pills, chips ---------- */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-soft);
-  padding: 22px 24px;
-  margin: 16px 0;
-}
 .pill {
   display: inline-flex; align-items: center; gap: 5px;
   font-size: 0.7rem; font-weight: 650;
@@ -424,7 +413,6 @@ main.shell.narrow { max-width: 760px; }
 .s4 { --sx: var(--s4); }
 .s5 { --sx: var(--s5); }
 .s6 { --sx: var(--s6); }
-.stage-accent { background: color-mix(in srgb, var(--sx, var(--accent)) 4%, var(--surface)); }
 .stage-index {
   display: inline-grid; place-items: center;
   width: 42px; height: 42px; flex: 0 0 auto;
@@ -435,14 +423,6 @@ main.shell.narrow { max-width: 760px; }
   font-weight: 700; font-size: 0.78rem;
   font-variant-numeric: tabular-nums;
 }
-.stage-icon {
-  display: inline-grid; place-items: center;
-  width: 42px; height: 42px; flex: 0 0 auto;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--sx, var(--accent)) 9%, var(--surface));
-  color: var(--sx, var(--accent-ink));
-}
-.stage-icon svg { width: 22px; height: 22px; }
 
 /* ---------- progress ---------- */
 .segs { display: flex; gap: 3px; flex: 1; min-width: 80px; align-items: center; }
@@ -684,7 +664,10 @@ main.shell.narrow { max-width: 760px; }
   display: flex; align-items: center; gap: 12px 16px; flex-wrap: wrap;
   margin: 18px 0 30px;
 }
-.practice-row .btn { flex: 0 0 auto; }
+/* The streak button's longest copy ("Log today · keep your N-day streak")
+   is wider than the page at ≤300px; let it shrink and wrap like the
+   master-next buttons do instead of overflowing. */
+.practice-row .btn { flex: 0 1 auto; white-space: normal; }
 .streakline { color: var(--muted); font-size: 0.88rem; font-weight: 600; }
 
 .section-head {
@@ -1191,8 +1174,26 @@ main.shell.narrow { max-width: 760px; }
 .callout.info { background: var(--surface-2); }
 .callout.info h2, .callout.info h3 { color: var(--s4); }
 
-/* Round 6 / WP2 — tip of the day, tucked straight under the Today card. */
-.tip-card { margin: 0 0 18px; }
+/* Round 6 / WP2 — tip of the day, tucked straight under the Today card.
+   WP6: the .tip-slot wrapper reserves the card's space before the deferred
+   app.js hydrates, so revealing the card doesn't shift the page. It keys off
+   the same data-home="returning" attribute the pre-paint check sets; JS
+   collapses the slot (the hidden attribute beats the CSS) when no tip shows.
+   The min-height tiers were measured across all tips at each width band:
+   tallest tip card 194px at 361–420, 209px at ≤360, 171px above 420. */
+.tip-slot { display: none; }
+[data-home="returning"] .tip-slot {
+  display: block;
+  min-height: 212px;
+  padding-bottom: 18px;
+}
+@media (max-width: 360px) {
+  [data-home="returning"] .tip-slot { min-height: 227px; }
+}
+@media (min-width: 421px) {
+  [data-home="returning"] .tip-slot { min-height: 189px; }
+}
+.tip-card { margin: 0; }
 .tip-card .tip-text { margin: 0; max-width: 68ch; }
 .tip-link {
   display: inline-flex; align-items: center; gap: 6px;
@@ -1252,7 +1253,6 @@ details.trouble > p { margin: 0 0 16px; color: var(--muted); max-width: 68ch; }
 .master-panel p { color: var(--muted); font-size: 0.92rem; }
 .master-panel.done { background: var(--ok-soft); border-color: color-mix(in srgb, var(--ok) 35%, var(--line)); }
 .master-panel .btn { margin: 6px 8px 6px 0; }
-.master-panel .steps-done-line { font-size: 0.8rem; margin: 8px 0 0; }
 .master-next {
   margin: 18px 0 0;
   padding-top: 16px;
@@ -1524,12 +1524,6 @@ body[data-page="exercise"] .toast { bottom: calc(96px + env(safe-area-inset-bott
 /* ---------- misc ---------- */
 .save-note { display: inline-flex; align-items: center; gap: 6px; }
 .save-ind { font-weight: 650; color: var(--ok); display: inline-flex; align-items: center; gap: 5px; }
-.reset-btn, .data-btn {
-  background: none; border: none; color: var(--accent-ink);
-  font: inherit; font-weight: 650; cursor: pointer;
-  text-decoration: underline; padding: 0; min-height: 44px;
-}
-.dataZone { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
 .noscript {
   margin: 0;
   padding: 12px 20px;
@@ -1539,8 +1533,6 @@ body[data-page="exercise"] .toast { bottom: calc(96px + env(safe-area-inset-bott
   text-align: center;
   border-bottom: 1px solid color-mix(in srgb, var(--warn) 20%, var(--line));
 }
-.print-only { display: none; }
-
 @media print {
   .topbar, .tabbar, .session-bar, .site-footer, .toast, .skip-link, .session-dialog, .modal { display: none !important; }
   body { background: #fff; color: #000; }
