@@ -768,8 +768,14 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
   margin: 16px 0;
 }
 .course-stage-grid .course-stage { margin: 0; height: 100%; }
-@media (max-width: 760px) {
-  .course-stage-grid { grid-template-columns: 1fr; }
+@media (max-width: 520px) {
+  .course-stage-grid { gap: 10px; }
+  .course-stage-grid .course-stage { padding: 14px 12px; }
+  .course-stage-grid .course-stage-head { gap: 10px; }
+  .course-stage-grid .course-stage-head h2 { font-size: 1.05rem; }
+  .course-stage-grid .stage-index { width: 34px; height: 34px; font-size: 0.68rem; }
+  .course-stage-grid .stage-purpose { font-size: 0.84rem; margin: 8px 0 10px; }
+  .course-stage-grid .stage-open { font-size: 0.8rem; }
 }
 
 .course-stage {
