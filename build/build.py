@@ -28,8 +28,8 @@ TOTAL = len(EXERCISES)
 # exact versioned URLs, and the service-worker precache must list the same
 # ones (caches.match is exact-match, query string included) or the offline
 # precache misses. Bump both whenever site.css / app.js change.
-CSS_V = 20
-JS_V = 18
+CSS_V = 21
+JS_V = 19
 EX_BY_SLUG = {row["ex"]["slug"]: row for row in EXERCISES}
 TAG_LABELS = {
     "calm": "Calm",
@@ -429,17 +429,12 @@ def when_span(when):
 
 
 def course_body():
-    spans = [when_span(s["when"]) for s in STAGES]
-    max_day = max(end for _, end in spans)
-
     timeline = []
-    for s, (start, end) in zip(STAGES, spans):
+    for s in STAGES:
         n = s["num"]
-        left = start / max_day * 100
-        width = (end - start) / max_day * 100
-        timeline.append(f'''<li class="timeline-row s{n}">
-<span class="timeline-key"><span class="timeline-num" aria-hidden="true">{n:02d}</span><span class="visually-hidden">Stage {n} · {esc(s["name"])}</span></span>
-<span class="timeline-track"><span class="timeline-bar" style="--start:{left:.2f}%;--len:{width:.2f}%"><span class="timeline-when">{esc(s["when"])}</span></span></span>
+        timeline.append(f'''<li class="timeline-item s{n}">
+<span class="timeline-dot" aria-hidden="true"></span>
+<span class="timeline-copy"><span class="timeline-name">{esc(s["name"])}</span><span class="timeline-when">{esc(s["when"])}</span></span>
 </li>''')
 
     cards = []
@@ -478,10 +473,9 @@ def course_body():
 </section>
 
 <section class="course-timeline" aria-labelledby="timeline-h">
-<div class="section-head"><h2 id="timeline-h">How the stages overlap</h2></div>
-<p class="section-note">Typical windows, not deadlines. Stages often overlap.</p>
+<div class="section-head"><h2 id="timeline-h">A rough guide to timing</h2></div>
+<p class="section-note">Every dog is different, and it’s totally normal for stages to overlap.</p>
 <ol class="timeline-list">{"".join(timeline)}</ol>
-<div class="timeline-axis" aria-hidden="true"><span></span><span class="timeline-axis-track"><span>Day 1</span><span>~3 months</span><span>~6 months</span></span></div>
 </section>
 
 <div class="section-head"><h2>Your stages</h2></div>

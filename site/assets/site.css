@@ -844,62 +844,33 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
 .timeline-list {
   list-style: none;
   margin: 14px 0 0;
-  padding: 12px 14px;
-  display: grid; gap: 7px;
+  padding: 14px 16px;
+  display: grid;
+  gap: 10px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
 }
-.timeline-row {
-  display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr);
-  gap: 10px; align-items: center;
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
   margin: 0;
 }
-.timeline-key { display: flex; justify-content: flex-end; }
-.timeline-num {
-  font-size: 0.66rem; font-weight: 700; color: var(--muted);
-  font-variant-numeric: tabular-nums;
+.timeline-dot {
+  flex: 0 0 auto;
+  width: 12px;
+  height: 12px;
+  margin-top: 0.35em;
+  border-radius: 50%;
+  background: var(--sx, var(--accent));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--sx, var(--accent)) 18%, transparent);
 }
-.timeline-track {
-  position: relative;
-  height: 26px;
-  border-radius: 6px;
-  background: var(--paper-2);
-}
-.timeline-bar {
-  position: absolute; top: 4px; bottom: 4px;
-  left: var(--start);
-  width: var(--len);
-  min-width: 6px;
-  border-radius: 5px;
-  background: color-mix(in srgb, var(--sx, var(--accent)) 14%, var(--surface));
-  border: 1px solid color-mix(in srgb, var(--sx, var(--accent)) 40%, var(--line));
-  display: flex; align-items: center;
-  overflow: visible;
-}
-.timeline-when {
-  position: relative; left: 6px;
-  padding-right: 6px;
-  font-size: 0.66rem; font-weight: 650;
-  color: var(--ink-2);
-  white-space: nowrap;
-}
-.timeline-axis {
-  display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr);
-  gap: 10px;
-  margin-top: 4px;
-  font-size: 0.62rem;
-  color: var(--muted);
-}
-.timeline-axis-track { display: flex; justify-content: space-between; gap: 8px; }
-.timeline-axis-track span:last-child { text-align: right; }
-@media (max-width: 360px) {
-  .timeline-list { padding: 10px; }
-  .timeline-row, .timeline-axis { grid-template-columns: 1.7rem minmax(0, 1fr); gap: 8px; }
-  .timeline-when { font-size: 0.6rem; left: 5px; }
-  .timeline-axis { font-size: 0.58rem; }
+.timeline-copy { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.timeline-name { font-weight: 650; line-height: 1.3; }
+.timeline-when { font-size: 0.86rem; color: var(--muted); line-height: 1.4; }
+@media (max-width: 420px) {
+  .timeline-list { padding: 12px 14px; gap: 12px; }
 }
 
 .course-stage.is-current {
