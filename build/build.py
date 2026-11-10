@@ -107,6 +107,16 @@ def manifest_script():
     return "<script>window.PS=" + payload + ";</script>"
 
 
+def tip_script():
+    """Tip-of-the-day data, injected into index.html only (WP2 / D7).
+
+    Tip texts deliberately stay out of window.PS so the other 42 pages do not
+    carry them. Same inline JSON pattern as the session data on exercise pages.
+    """
+    payload = json.dumps(data_rules.TIPS, ensure_ascii=False).replace("</", "<\\/")
+    return f'<script type="application/json" class="js-tip-data">{payload}</script>'
+
+
 def home_mode_script():
     """Set data-home="returning" before first paint on the home page only.
 
@@ -219,8 +229,8 @@ def shell(title, desc, P, body, page, colorclass="", subbar=False,
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="{BRAND}">
 <link rel="preload" as="font" type="font/woff2" href="{P}assets/fonts/fraunces.woff2" crossorigin>
-<link rel="stylesheet" href="{P}assets/site.css?v=11">
-<script src="{P}assets/app.js?v=9" data-root="{P}" defer></script>
+<link rel="stylesheet" href="{P}assets/site.css?v=12">
+<script src="{P}assets/app.js?v=10" data-root="{P}" defer></script>
 {manifest_script()}
 {extra_head}
 </head>
@@ -304,6 +314,12 @@ def home_body():
 </section>
 
 <!-- WP2: tip of the day slot (insert directly after the Today card). -->
+<section class="callout tip tip-card js-tip" aria-labelledby="tip-h" hidden>
+<h3 id="tip-h">Try this today</h3>
+<p class="tip-text js-tip-text"></p>
+<a class="tip-link js-tip-link" href="golden-rules.html"><span>Why this helps</span> {svg("arrow-right")}</a>
+</section>
+{tip_script()}
 
 <section class="progress-panel home-progress" id="progress" aria-labelledby="progress-h">
 <div class="ring" data-progress="all"><span class="hole"></span><span class="ring-num js-ring-num">0%</span></div>
@@ -375,7 +391,7 @@ def course_body():
 # ---------------------------------------------------------------- Rules
 def rules_body():
     rule_cards = "".join(
-        f'''<div class="rule-card"><span class="n">{i:02d}</span><h3>{esc(r["t"])}</h3><p>{esc(r["d"])}</p></div>'''
+        f'''<div class="rule-card" id="rule-{i}"><span class="n">{i:02d}</span><h3>{esc(r["t"])}</h3><p>{esc(r["d"])}</p></div>'''
         for i, r in enumerate(data_rules.GOLDEN_RULES, 1)
     )
     dont_items = "".join(f"<li>{esc(d)}</li>" for d in data_rules.DONT_LIST)

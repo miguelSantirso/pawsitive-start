@@ -82,6 +82,12 @@
     var d = new Date();
     return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
   }
+  /* Local calendar day as an integer, used to pick one tip per day. Built from
+     UTC of the local date parts so DST changes cannot skip or repeat a day. */
+  function dayNumber() {
+    var d = new Date();
+    return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+  }
   function shiftDay(dstr, n) {
     var p = dstr.split("-");
     var d = new Date(+p[0], +p[1] - 1, +p[2]);
@@ -210,6 +216,7 @@
     renderStageCards();
     renderStatusPills();
     renderToday();
+    renderTip();
     renderStreak();
     renderExercisePage();
     renderSaveNote();
@@ -339,6 +346,47 @@
     if (text) text.textContent = m.g || "";
     if (link) link.setAttribute("href", href);
     if (linkText) linkText.textContent = "Start exercise";
+  }
+
+  function renderTip() {
+    var card = $(".js-tip");
+    if (!card || document.body.getAttribute("data-page") !== "home") return;
+    var data = tipData();
+    if (!data || !data.length || !hasProgress()) {
+      card.hidden = true;
+      return;
+    }
+
+    var nxt = nextUp();
+    var stage = nxt ? stageOf(nxt) : null;
+    var pool = data.filter(function (tip) {
+      return !stage || tip.st == null || String(tip.st) === String(stage);
+    });
+    if (!pool.length) pool = data;
+
+    var tip = pool[dayNumber() % pool.length];
+    if (!tip) {
+      card.hidden = true;
+      return;
+    }
+    var text = $(".js-tip-text", card);
+    var link = $(".js-tip-link", card);
+    if (text) text.textContent = tip.t || "";
+    if (link && /^golden-rules\.html#[a-z0-9-]+$/.test(tip.ref || "")) {
+      link.setAttribute("href", tip.ref);
+    }
+    card.hidden = false;
+  }
+
+  function tipData() {
+    var el = $(".js-tip-data");
+    if (!el) return null;
+    try {
+      var data = JSON.parse(el.textContent);
+      return Array.isArray(data) ? data : null;
+    } catch (e) {
+      return null;
+    }
   }
 
   function renderStreak() {
