@@ -28,8 +28,8 @@ TOTAL = len(EXERCISES)
 # exact versioned URLs, and the service-worker precache must list the same
 # ones (caches.match is exact-match, query string included) or the offline
 # precache misses. Bump both whenever site.css / app.js change.
-CSS_V = 21
-JS_V = 19
+CSS_V = 22
+JS_V = 20
 EX_BY_SLUG = {row["ex"]["slug"]: row for row in EXERCISES}
 TAG_LABELS = {
     "calm": "Calm",
@@ -412,36 +412,12 @@ def home_body():
 
 
 # ---------------------------------------------------------------- Course
-# Stage windows such as "Weeks 2–5" are normalised to a shared days scale for
-# the static overlap timeline. A course "month" is four weeks, which keeps
-# "Months 3–6" aligned with the end of "Weeks 6–12".
-_WHEN_UNIT_DAYS = {"day": 1, "week": 7, "month": 28}
-
-
-def when_span(when):
-    """Return (start_day, end_day) for a stage window such as "Weeks 2–5"."""
-    m = re.search(r"(day|week|month)s?\s+(\d+)\s*[–—−-]\s*(\d+)", when.lower())
-    if not m:
-        raise ValueError(f"Unrecognised stage window: {when!r}")
-    unit, start, end = m.group(1), int(m.group(2)), int(m.group(3))
-    factor = _WHEN_UNIT_DAYS[unit]
-    return start * factor, end * factor
-
-
 def course_body():
-    timeline = []
-    for s in STAGES:
-        n = s["num"]
-        timeline.append(f'''<li class="timeline-item s{n}">
-<span class="timeline-dot" aria-hidden="true"></span>
-<span class="timeline-copy"><span class="timeline-name">{esc(s["name"])}</span><span class="timeline-when">{esc(s["when"])}</span></span>
-</li>''')
-
-    cards = []
+    card_by_num = {}
     for s in STAGES:
         n = s["num"]
         first = s["exercises"][0]
-        cards.append(f'''<article class="course-stage s{n} js-stage-card" data-stage="{n}">
+        card_by_num[n] = f'''<article class="course-stage s{n} js-stage-card" data-stage="{n}">
 <div class="course-stage-head">
 <span class="stage-index">{n:02d}</span>
 <div><h2><a href="stage-{n}.html">{esc(s["name"])}</a></h2><span class="stage-meta">{esc(s["when"])} · {len(s["exercises"])} exercises</span><span class="stage-now">You are here</span></div>
@@ -454,7 +430,21 @@ def course_body():
 <span class="stage-next-wrap js-stage-next-wrap"><span aria-hidden="true"> · </span><span class="stage-next-label">next up:</span> <a class="stage-next js-stage-next" href="exercises/{esc(first["slug"])}.html"><span class="js-stage-next-title">{esc(first["title"])}</span></a></span>
 </div>
 <a class="stage-open" href="stage-{n}.html">Open stage {svg("arrow-right")}</a>
-</article>''')
+</article>'''
+
+    groups = [
+        ("Settling in", "The first days and weeks at home.", [1, 2]),
+        ("Learning the basics", "Everyday skills as your dog starts to feel comfortable.", [3, 4]),
+        ("Feeling at home", "Building confidence for the long run.", [5, 6]),
+    ]
+    group_sections = []
+    for title, note, nums in groups:
+        cards = "".join(card_by_num[n] for n in nums)
+        group_sections.append(f'''<section class="course-group" aria-labelledby="group-{nums[0]}-h">
+<div class="section-head"><h2 id="group-{nums[0]}-h">{esc(title)}</h2></div>
+<p class="section-note">{esc(note)}</p>
+<div class="course-stage-grid">{cards}</div>
+</section>''')
 
     first_row = EXERCISES[0]
     first_href = f'exercises/{first_row["ex"]["slug"]}.html'
@@ -472,14 +462,7 @@ def course_body():
 </div>
 </section>
 
-<section class="course-timeline" aria-labelledby="timeline-h">
-<div class="section-head"><h2 id="timeline-h">A rough guide to timing</h2></div>
-<p class="section-note">Every dog is different, and it’s totally normal for stages to overlap.</p>
-<ol class="timeline-list">{"".join(timeline)}</ol>
-</section>
-
-<div class="section-head"><h2>Your stages</h2></div>
-<div class="course-stage-grid">{"".join(cards)}</div>
+{"".join(group_sections)}
 
 <section class="milestones" aria-labelledby="milestones-h">
 <div class="section-head"><h2 id="milestones-h">Milestones</h2></div>
