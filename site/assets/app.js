@@ -115,6 +115,10 @@
     return !!(state.days && state.days.length);
   }
   function stepsMeta(sg) { var m = exMeta(sg); return { s: (m && m.s) || 0, cr: (m && m.cr) || 0 }; }
+  function exTitle(sg) { var m = exMeta(sg); return (m && m.t) || sg; }
+  function exerciseHref(sg) { return root + "exercises/" + sg + ".html"; }
+  function stageHref(n) { return root + "stage-" + n + ".html"; }
+  function courseHref() { return root + "course.html"; }
   function announce(msg) { $$(".js-announcer").forEach(function (el) { el.textContent = msg; }); }
 
   /* ---------- mutations ---------- */
@@ -144,21 +148,25 @@
       inf.m = false;
     }
     save();
-    announce(on ? "Exercise marked as mastered." : "Mastery removed.");
-    if (on && !was) celebrateStage(sg);
+    if (!on) {
+      announce("Mastery removed.");
+      return;
+    }
+    var n = stageOf(sg);
+    var stageDone = !was && stageIsComplete(n);
+    var nxt = nextUp(sg);
+    var msg = "Exercise marked as mastered.";
+    if (stageDone) msg += " Stage " + n + " complete — a great stopping point.";
+    if (nxt) msg += " Next up: " + exTitle(nxt) + ".";
+    else msg += " That is every stage — revisit anything you like.";
+    announce(msg);
   }
 
   function stageOf(sg) { var m = exMeta(sg); return m && m.st ? String(m.st) : null; }
   function stageSlugs(n) { return slugs().filter(function (s) { return String((exMeta(s) || {}).st || "") === String(n); }); }
-
-  function celebrateStage(sg) {
-    var n = stageOf(sg);
-    if (!n) return;
-    var all = stageSlugs(n);
-    if (!all.length || !all.every(isMastered)) return;
-    /* Stage completion lives in the master-panel banner, not the single-slot
-       toast, so the mastery acknowledgement is not overwritten. */
-    announce("Stage " + n + " complete — a great stopping point.");
+  function stageIsComplete(n) {
+    var all = n ? stageSlugs(n) : [];
+    return !!(all.length && all.every(isMastered));
   }
 
   /* ---------- progress math ---------- */
@@ -385,14 +393,53 @@
 
     var stageBanner = $(".js-stage-complete");
     if (stageBanner) {
-      var stageNum = stageOf(sg);
-      var stageList = stageNum ? stageSlugs(stageNum) : [];
-      stageBanner.hidden = !(stageList.length && stageList.every(isMastered));
+      stageBanner.hidden = !stageIsComplete(stageOf(sg));
     }
+
+    if (panel) renderMasterNext(panel, sg);
 
     var ta = $(".js-notes");
     if (ta && document.activeElement !== ta) ta.value = state.notes[sg] || "";
     renderSessionBar(sDone, meta.s);
+  }
+
+  function renderMasterNext(panel, sg) {
+    var wrap = $(".js-master-next", panel);
+    if (!wrap) return;
+    var mastered = isMastered(sg);
+    var keep = $(".js-keepgoing", panel);
+    if (keep) keep.hidden = mastered;
+    if (!mastered) {
+      wrap.hidden = true;
+      return;
+    }
+    wrap.hidden = false;
+
+    var n = stageOf(sg);
+    var back = $(".js-master-next-back", panel);
+    if (back && n) back.setAttribute("href", stageHref(n));
+
+    var link = $(".js-master-next-link", wrap);
+    var label = $(".js-master-next-label", wrap);
+    var nxt = nextUp(sg);
+    if (!nxt) {
+      if (link) {
+        link.hidden = false;
+        link.setAttribute("href", courseHref());
+      }
+      if (label) label.textContent = "Revisit the course";
+      return;
+    }
+    var m = exMeta(nxt) || {};
+    var ns = m.st ? String(m.st) : "";
+    var boundary = !!n && !!ns && ns !== n;
+    if (link) {
+      link.hidden = false;
+      link.setAttribute("href", exerciseHref(nxt));
+    }
+    if (label) {
+      label.textContent = (boundary ? "Start Stage " + ns + ": " : "Next up: ") + exTitle(nxt);
+    }
   }
 
   function renderSessionBar(sDone, total) {
@@ -522,6 +569,7 @@
       if (completeEl) completeEl.hidden = false;
       if (progress) progress.style.width = "100%";
       if (count) count.textContent = len + " of " + len + " steps";
+      renderSessionNext(dlg);
       return;
     }
 
@@ -533,6 +581,59 @@
     if (progress) progress.style.width = (len ? Math.round((session.i / len) * 100) : 0) + "%";
     if (prev) prev.disabled = session.i === 0;
     if (next) next.textContent = session.i === len - 1 ? "Finish" : "Next";
+  }
+
+  function renderSessionNext(dlg) {
+    var wrap = $(".js-session-nextup", dlg);
+    if (!wrap) return;
+    var sg = session.slug || slug();
+    var mastered = !!sg && isMastered(sg);
+    var masterBtn = $(".js-session-master", dlg);
+    var copy = $(".js-session-complete-text", dlg);
+    if (masterBtn) masterBtn.hidden = mastered;
+    if (!mastered) {
+      if (copy) copy.textContent = "Nice work. If it went well, mark the exercise as mastered — or come back tomorrow and repeat it.";
+      wrap.hidden = true;
+      return;
+    }
+    if (copy) copy.textContent = "Nice work. This one is mastered — keep going, or stop here for today.";
+    wrap.hidden = false;
+
+    var link = $(".js-session-next-link", wrap);
+    var label = $(".js-session-next-label", wrap);
+    var lead = $(".js-session-next-lead", wrap);
+    var nxt = nextUp(sg);
+    if (!nxt) {
+      if (link) {
+        link.hidden = false;
+        link.setAttribute("href", courseHref());
+      }
+      if (label) label.textContent = "Revisit the course";
+      if (lead) {
+        lead.hidden = false;
+        lead.textContent = "Every stage is mastered.";
+      }
+      return;
+    }
+    var m = exMeta(nxt) || {};
+    var ns = m.st ? String(m.st) : "";
+    var cur = stageOf(sg);
+    var boundary = !!cur && !!ns && ns !== cur;
+    if (link) {
+      link.hidden = false;
+      link.setAttribute("href", exerciseHref(nxt));
+    }
+    if (label) {
+      label.textContent = (boundary ? "Start Stage " + ns + ": " : "Next up: ") + exTitle(nxt);
+    }
+    if (lead) {
+      if (boundary) {
+        lead.hidden = false;
+        lead.textContent = "That's Stage " + cur + " complete — a great stopping point.";
+      } else {
+        lead.hidden = true;
+      }
+    }
   }
 
   function sessionNext() {
@@ -786,7 +887,7 @@
     $$(".js-session-master").forEach(function (b) {
       b.addEventListener("click", function () {
         setMastered(slug(), true);
-        closeSession();
+        renderSession();
         showToast("Mastered. Small wins add up.");
       });
     });

@@ -171,8 +171,8 @@ def shell(title, desc, P, body, page, colorclass="", subbar=False,
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="{BRAND}">
 <link rel="preload" as="font" type="font/woff2" href="{P}assets/fonts/fraunces.woff2" crossorigin>
-<link rel="stylesheet" href="{P}assets/site.css?v=9">
-<script src="{P}assets/app.js?v=7" data-root="{P}" defer></script>
+<link rel="stylesheet" href="{P}assets/site.css?v=10">
+<script src="{P}assets/app.js?v=8" data-root="{P}" defer></script>
 {manifest_script()}
 {extra_head}
 </head>
@@ -549,12 +549,12 @@ def exercise_body(row):
     prev_row = EXERCISES[gi - 2] if gi > 1 else None
     next_row = EXERCISES[gi] if gi < len(EXERCISES) else None
     prev_link = (
-        (f'{prev_row["ex"]["slug"]}.html', prev_row["ex"]["title"], "← Previous")
+        (f'{prev_row["ex"]["slug"]}.html', prev_row["ex"]["title"], "← Previous in the stage")
         if prev_row else
         (f'../stage-{n}.html', f'Stage {n} · {s["name"]}', "Back to stage")
     )
     next_link = (
-        (f'{next_row["ex"]["slug"]}.html', next_row["ex"]["title"], "Next →")
+        (f'{next_row["ex"]["slug"]}.html', next_row["ex"]["title"], "Next in the stage →")
         if next_row else
         ("../golden-rules.html", "The golden rules", "Reference")
     )
@@ -628,6 +628,13 @@ def exercise_body(row):
 <div class="stage-complete js-stage-complete" role="status" hidden>Stage {n} complete — a great stopping point.</div>
 <button type="button" class="btn btn-primary js-master">Mark as mastered</button>
 <button type="button" class="btn btn-ghost js-keepgoing">Not quite yet</button>
+<div class="master-next js-master-next" hidden>
+<div class="master-next-actions">
+<a class="btn btn-primary js-master-next-link" href="../index.html" hidden><span class="js-master-next-label">Next up</span>{svg("arrow-right")}</a>
+<a class="btn btn-quiet js-master-next-back" href="../stage-{n}.html">Back to Stage {n}</a>
+<a class="btn btn-quiet js-master-next-done" href="../index.html">Done for today</a>
+</div>
+</div>
 </div>
 
 <div class="footnav">
@@ -651,7 +658,11 @@ def exercise_body(row):
 <div class="session-actions"><button type="button" class="btn btn-quiet js-session-prev">Back</button><button type="button" class="btn btn-primary js-session-next">Next</button></div>
 <div class="session-complete js-session-complete" hidden>
 <h2>Session complete</h2>
-<p>Nice work. If it went well, mark the exercise as mastered — or come back tomorrow and repeat it.</p>
+<p class="js-session-complete-text">Nice work. If it went well, mark the exercise as mastered — or come back tomorrow and repeat it.</p>
+<div class="session-next js-session-nextup" hidden>
+<p class="session-next-lead js-session-next-lead" hidden></p>
+<a class="btn btn-primary js-session-next-link" href="../index.html" hidden><span class="js-session-next-label">Next up</span>{svg("arrow-right")}</a>
+</div>
 <button type="button" class="btn btn-primary js-session-master">Mark as mastered</button>
 <button type="button" class="btn btn-quiet js-session-done">Close</button>
 </div>
