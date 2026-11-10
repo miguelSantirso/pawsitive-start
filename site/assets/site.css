@@ -773,6 +773,25 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
   margin: 16px 0;
 }
 .course-stage-grid .course-stage { margin: 0; height: 100%; }
+.course-stage-home-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.course-stage-home-link:hover { text-decoration: none; }
+.course-stage-home-link:hover h2 { text-decoration: underline; }
+.course-stage--home { padding: 16px 18px; }
+.course-stage--home .course-stage-head { margin-bottom: 10px; }
+.course-stage--home h2 { margin: 0; font-size: 1.1rem; }
+.course-stage--home .progress-row { margin: 0; }
+.course-stage--home .progress-label { font-size: 0.72rem; }
+@media (max-width: 520px) {
+  .course-stage--home .progress-label { display: none; }
+}
+@media (max-width: 520px) {
+  .course-stage--home { padding: 12px 12px; }
+  .course-stage--home h2 { font-size: 1rem; }
+}
 @media (max-width: 520px) {
   .course-stage-grid { gap: 10px; }
   .course-stage-grid .course-stage { padding: 14px 12px; }

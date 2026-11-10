@@ -28,8 +28,8 @@ TOTAL = len(EXERCISES)
 # exact versioned URLs, and the service-worker precache must list the same
 # ones (caches.match is exact-match, query string included) or the offline
 # precache misses. Bump both whenever site.css / app.js change.
-CSS_V = 33
-JS_V = 31
+CSS_V = 34
+JS_V = 32
 EX_BY_SLUG = {row["ex"]["slug"]: row for row in EXERCISES}
 TAG_LABELS = {
     "calm": "Calm",
@@ -306,6 +306,21 @@ def stage_rows(P):
     return "\n".join(rows)
 
 
+def home_stage_cards(P=""):
+    cards = []
+    for s in STAGES:
+        n = s["num"]
+        cards.append(f'''<article class="course-stage course-stage--home s{n} js-stage-card" data-stage="{n}">
+<a class="course-stage-home-link" href="{P}stage-{n}.html">
+<div class="course-stage-head">
+<div class="course-stage-copy"><span class="stage-index">{n:02d}</span><h2>{esc(s["name"])}</h2><span class="stage-meta">{esc(s["when"])}</span></div>
+</div>
+<div class="progress-row"><div class="segs" data-progress="{n}"></div><span class="progress-label js-prog-label"></span></div>
+</a>
+</article>''')
+    return f'<div class="course-stage-grid course-stage-grid--home">{"".join(cards)}</div>'
+
+
 def principles():
     out = []
     for i, h in enumerate(data_rules.HOW_IT_WORKS, 1):
@@ -394,9 +409,7 @@ def home_body():
 </div>
 
 <div class="section-head"><h2>Your course</h2><a href="course.html">View all stages →</a></div>
-<ol class="stage-list">
-{stage_rows("")}
-</ol>
+{home_stage_cards("")}
 
 <div class="home-principles">
 <div class="section-head"><h2>How this works</h2></div>
