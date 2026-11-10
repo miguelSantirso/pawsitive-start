@@ -28,8 +28,8 @@ TOTAL = len(EXERCISES)
 # exact versioned URLs, and the service-worker precache must list the same
 # ones (caches.match is exact-match, query string included) or the offline
 # precache misses. Bump both whenever site.css / app.js change.
-CSS_V = 35
-JS_V = 33
+CSS_V = 36
+JS_V = 34
 EX_BY_SLUG = {row["ex"]["slug"]: row for row in EXERCISES}
 TAG_LABELS = {
     "calm": "Calm",
@@ -140,14 +140,26 @@ def manifest_script():
     return "<script>window.PS=" + payload + ";</script>"
 
 
-def tip_script():
-    """Tip-of-the-day data, injected into index.html only (WP2 / D7).
+def tip_banner(P=""):
+    """Tip-of-the-day banner, injected into index.html only (WP2 / D7).
 
     Tip texts deliberately stay out of window.PS so the other 42 pages do not
-    carry them. Same inline JSON pattern as the session data on exercise pages.
+    carry them. Rendered as a full-width container below the app header.
     """
     payload = json.dumps(data_rules.TIPS, ensure_ascii=False).replace("</", "<\\/")
-    return f'<script type="application/json" class="js-tip-data">{payload}</script>'
+    return f'''<div class="tip-banner js-tip-banner" hidden>
+<div class="tip-banner-inner">
+<div class="callout tip tip-card js-tip">
+<div class="tip-banner-body">
+<h3 id="tip-h">Try this today</h3>
+<p class="tip-text js-tip-text"></p>
+<a class="tip-link js-tip-link" href="{P}golden-rules.html"><span>Why this helps</span> {svg("arrow-right")}</a>
+</div>
+<button type="button" class="tip-dismiss js-tip-dismiss" aria-label="Dismiss tip for today">{svg("x")}</button>
+</div>
+</div>
+<script type="application/json" class="js-tip-data">{payload}</script>
+</div>'''
 
 
 def home_mode_script():
@@ -155,9 +167,9 @@ def home_mode_script():
 
     Round-6 validation invariant: this derived check MUST mirror hasProgress()
     in site/assets/app.js exactly (it is duplicated here to avoid a flash of
-    the onboarding hero on returning visits). Ignore savedAt, ignore empty
+    the onboarding hero on returning visits). Ignore savedAt and empty
     per-exercise records; any mastered exercise, any true step/criteria flag,
-    any non-blank note, or any practice day means progress exists.
+    or any non-blank note means progress exists.
     """
     return '''<script>
 (function () {
@@ -174,7 +186,6 @@ def home_mode_script():
     }
     var key, inf;
     var notes = st.notes && typeof st.notes === "object" && !Array.isArray(st.notes) ? st.notes : {};
-    var days = Array.isArray(st.days) ? st.days : [];
     for (key in st.ex) {
       if (!Object.prototype.hasOwnProperty.call(st.ex, key)) continue;
       inf = st.ex[key] || {};
@@ -189,9 +200,6 @@ def home_mode_script():
         document.documentElement.setAttribute("data-home", "returning");
         return;
       }
-    }
-    if (days.length) {
-      document.documentElement.setAttribute("data-home", "returning");
     }
   } catch (e) {}
 })();
@@ -273,6 +281,7 @@ def shell(title, desc, P, body, page, colorclass="", subbar=False,
 <a class="skip-link" href="#main">Skip to content</a>
 <noscript><p class="noscript">This course works without JavaScript, but saving progress needs it switched on.</p></noscript>
 {topbar(P, page, subbar, stage)}
+{tip_banner(P) if page == "home" else ""}
 <main class="shell" id="main">
 {body}
 </main>
@@ -371,24 +380,6 @@ def home_body():
 <button type="button" class="btn btn-ghost js-placement-skip">Not sure — start at the beginning</button>
 </section>
 
-<!-- WP2: tip of the day (insert directly after the Today card). WP6: the
-     js-tip-slot wrapper reserves the card's space before the deferred app.js
-     hydrates, so the card appearing doesn't shift the page (see .tip-slot in
-     site/assets/site.css). -->
-<div class="tip-slot js-tip-slot">
-<section class="callout tip tip-card js-tip" aria-labelledby="tip-h" hidden>
-<h3 id="tip-h">Try this today</h3>
-<p class="tip-text js-tip-text"></p>
-<a class="tip-link js-tip-link" href="golden-rules.html"><span>Why this helps</span> {svg("arrow-right")}</a>
-</section>
-</div>
-{tip_script()}
-
-<div class="practice-row">
-<button type="button" class="btn btn-quiet js-streak">I practised today</button>
-<span class="streakline js-streakline"></span>
-</div>
-
 <div class="section-head"><h2>Your course</h2><a href="course.html">View all stages →</a></div>
 {home_stage_cards("")}
 
@@ -460,7 +451,6 @@ def course_body():
 <ul class="milestone-list">
 <li class="milestone" data-milestone="first"><span class="milestone-icon" aria-hidden="true"></span><span class="milestone-copy"><span class="milestone-title">First exercise mastered</span><span class="milestone-sub">The first small win — and the hardest part is starting.</span></span><span class="milestone-state">Not yet</span></li>
 <li class="milestone" data-milestone="stage1"><span class="milestone-icon" aria-hidden="true"></span><span class="milestone-copy"><span class="milestone-title">Stage 1 complete — decompression done</span><span class="milestone-sub">Safety, sleep and routine are in place.</span></span><span class="milestone-state">Not yet</span></li>
-<li class="milestone" data-milestone="seven-days"><span class="milestone-icon" aria-hidden="true"></span><span class="milestone-copy"><span class="milestone-title">Seven practice days logged</span><span class="milestone-sub">Any practice counts — there is no streak to lose.</span></span><span class="milestone-state">Not yet</span></li>
 <li class="milestone" data-milestone="halfway"><span class="milestone-icon" aria-hidden="true"></span><span class="milestone-copy"><span class="milestone-title">Halfway there</span><span class="milestone-sub">{halfway} of {TOTAL} exercises done.</span></span><span class="milestone-state">Not yet</span></li>
 <li class="milestone" data-milestone="stage-complete"><span class="milestone-icon" aria-hidden="true"></span><span class="milestone-copy"><span class="milestone-title">A full stage complete</span><span class="milestone-sub js-ms-stages">0 of {len(STAGES)} stages complete</span></span><span class="milestone-state">Not yet</span></li>
 <li class="milestone" data-milestone="course"><span class="milestone-icon" aria-hidden="true"></span><span class="milestone-copy"><span class="milestone-title">Course complete</span><span class="milestone-sub">All six stages done. Revisit anything you like.</span></span><span class="milestone-state">Not yet</span></li>
@@ -587,13 +577,13 @@ def settings_body():
 </div>
 <details>
 <summary>How backups work</summary>
-<p>The export downloads a small JSON file with your checkmarks, mastered exercises, practice days and notes. Import it on another device to pick up where you left off. Importing replaces whatever is currently saved in this browser.</p>
+<p>The export downloads a small JSON file with your checkmarks, mastered exercises and notes. Import it on another device to pick up where you left off. Importing replaces whatever is currently saved in this browser.</p>
 </details>
 </section>
 
 <section class="settings-card">
 <h2>Start over</h2>
-<p>This clears every checkmark, mastered exercise, practice day and note on this device. Export a backup first if you might want it back.</p>
+<p>This clears every checkmark, mastered exercise and note on this device. Export a backup first if you might want it back.</p>
 <button type="button" class="btn btn-danger js-reset">{svg("trash")} Reset all progress…</button>
 </section>
 
@@ -625,7 +615,7 @@ def settings_body():
 <dialog class="modal" id="reset-dialog" aria-labelledby="reset-title">
 <div class="modal-inner">
 <h2 id="reset-title">Reset all progress?</h2>
-<p>Every checkmark, mastered exercise, practice day and note on this device will be cleared. This cannot be undone.</p>
+<p>Every checkmark, mastered exercise and note on this device will be cleared. This cannot be undone.</p>
 <div class="modal-actions">
 <button type="button" class="btn btn-ghost js-modal-close">Cancel</button>
 <button type="button" class="btn btn-danger js-reset-confirm">Reset everything</button>

@@ -21,7 +21,7 @@
   if (!root) root = "./";
 
   /* ---------- state ---------- */
-  function blank() { return { v: 1, savedAt: null, ex: {}, days: [], notes: {}, focus: null, focusAsked: false }; }
+  function blank() { return { v: 1, savedAt: null, ex: {}, days: [], notes: {}, focus: null, focusAsked: false, tipDismissed: null }; }
 
   var storageOK = true;
   var memory = null;
@@ -60,6 +60,10 @@
       fs = validStage(st.focus.stage);
       if (fs) focus = { stage: fs };
     }
+    var tipDismissed = null;
+    if (typeof st.tipDismissed === "string" && /^\d{4}-\d{2}-\d{2}$/.test(st.tipDismissed)) {
+      tipDismissed = st.tipDismissed;
+    }
     return {
       v: 1,
       savedAt: st.savedAt || null,
@@ -67,7 +71,8 @@
       days: Array.isArray(st.days) ? st.days : [],
       notes: st.notes && typeof st.notes === "object" && !Array.isArray(st.notes) ? st.notes : {},
       focus: focus,
-      focusAsked: st.focusAsked === true
+      focusAsked: st.focusAsked === true,
+      tipDismissed: tipDismissed
     };
   }
 
@@ -142,7 +147,7 @@
     for (key in notes) {
       if (Object.prototype.hasOwnProperty.call(notes, key) && notes[key] && String(notes[key]).trim()) return true;
     }
-    return !!(state.days && state.days.length);
+    return false;
   }
   function stepsMeta(sg) { var m = exMeta(sg); return { s: (m && m.s) || 0, cr: (m && m.cr) || 0 }; }
   function exTitle(sg) { var m = exMeta(sg); return (m && m.t) || sg; }
@@ -242,20 +247,6 @@
     return null;
   }
   function firstUnmastered() { return nextUp(); }
-  function daysInLast7() {
-    var t = today(), n = 0;
-    for (var i = 0; i < 7; i++) if (state.days.indexOf(shiftDay(t, -i)) !== -1) n++;
-    return n;
-  }
-  function currentStreak() {
-    var days = state.days.slice().sort();
-    if (!days.length) return 0;
-    var start = days[days.length - 1] === today() ? today() : shiftDay(today(), -1);
-    if (days.indexOf(start) === -1) return 0;
-    var n = 0, d = start;
-    while (days.indexOf(d) !== -1) { n++; d = shiftDay(d, -1); }
-    return n;
-  }
 
   /* ---------- render ---------- */
   function render() {
@@ -268,7 +259,6 @@
     renderToday();
     renderPlacement();
     renderTip();
-    renderStreak();
     renderExercisePage();
     renderSaveNote();
     renderInstall();
@@ -394,9 +384,6 @@
       }
     });
 
-    var daySet = {};
-    (state.days || []).forEach(function (d) { daySet[d] = true; });
-    var practiceDays = Object.keys(daySet).length;
     var stages = stageNumbers();
     var completedStages = 0;
     stages.forEach(function (n) {
@@ -405,7 +392,6 @@
 
     setMilestone("first", done >= 1);
     setMilestone("stage1", stageIsComplete("1"));
-    setMilestone("seven-days", practiceDays >= 7);
     setMilestone("halfway", done >= Math.ceil(all.length / 2));
     setMilestone("stage-complete", completedStages >= 1);
     setMilestone("course", !!all.length && done === all.length);
@@ -571,20 +557,21 @@
     announce(s ? "Starting suggestion set to Stage " + s + "." : "Starting at the beginning of the course.");
   }
 
-  /* WP2 tip of the day. WP6: the .js-tip-slot wrapper around the card
-     reserves the card's space before hydration (keyed off data-home in
-     site.css), so revealing the card doesn't shift the page. Whenever no tip
-     is shown the whole slot collapses so no blank space is left behind. */
+  /* WP2 tip of the day: full-width banner below the header on the home page.
+     One deterministic tip per local day, dismissible for the day. */
   function renderTip() {
-    var card = $(".js-tip");
-    if (!card || document.body.getAttribute("data-page") !== "home") return;
-    var slot = $(".js-tip-slot") || card;
+    var banner = $(".js-tip-banner");
+    if (!banner) return;
+    var card = $(".js-tip", banner) || banner;
     function hideTip() {
-      card.hidden = true;
-      slot.hidden = true;
+      banner.hidden = true;
+    }
+    if (document.body.getAttribute("data-page") !== "home" || !hasProgress() || state.tipDismissed === today()) {
+      hideTip();
+      return;
     }
     var data = tipData();
-    if (!data || !data.length || !hasProgress()) {
+    if (!data || !data.length) {
       hideTip();
       return;
     }
@@ -601,14 +588,19 @@
       hideTip();
       return;
     }
-    var text = $(".js-tip-text", card);
-    var link = $(".js-tip-link", card);
+    var text = $(".js-tip-text", banner);
+    var link = $(".js-tip-link", banner);
     if (text) text.textContent = tip.t || "";
     if (link && /^golden-rules\.html#[a-z0-9-]+$/.test(tip.ref || "")) {
       link.setAttribute("href", tip.ref);
     }
-    card.hidden = false;
-    slot.hidden = false;
+    banner.hidden = false;
+  }
+
+  function dismissTip() {
+    state.tipDismissed = today();
+    save();
+    announce("Tip hidden for today.");
   }
 
   function tipData() {
@@ -620,30 +612,6 @@
     } catch (e) {
       return null;
     }
-  }
-
-  function renderStreak() {
-    $$(".js-streak").forEach(function (btn) {
-      var logged = state.days.indexOf(today()) !== -1;
-      var n = currentStreak();
-      if (logged) {
-        btn.setAttribute("disabled", "disabled");
-        btn.textContent = n > 1 ? "Practised today · " + n + "-day streak" : "Practised today";
-      } else {
-        btn.removeAttribute("disabled");
-        btn.textContent = n > 0 ? "Log today · keep your " + n + "-day streak" : "I practised today";
-      }
-    });
-    $$(".js-streakline").forEach(function (el) {
-      var d7 = daysInLast7();
-      el.textContent = d7 === 0
-        ? "No practice logged yet. A few minutes today is a good start."
-        : d7 + (d7 === 1 ? " practice day" : " practice days") + " in the last seven.";
-    });
-    $$(".js-strip-days").forEach(function (el) {
-      var d7 = daysInLast7();
-      el.textContent = d7 + (d7 === 1 ? " practice day" : " practice days") + " this week";
-    });
   }
 
   function renderExercisePage() {
@@ -1136,17 +1104,6 @@
         showToast("No rush. A short repeat tomorrow is enough.");
       });
     });
-    $$(".js-streak").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var t = today();
-        if (state.days.indexOf(t) === -1) {
-          state.days.push(t);
-          save();
-          announce("Practice day logged.");
-          showToast("Practice logged. Same time tomorrow.");
-        }
-      });
-    });
 
     $$(".js-placement").forEach(function (b) {
       b.addEventListener("click", function () { chooseFocus(+b.getAttribute("data-stage")); });
@@ -1159,6 +1116,9 @@
         var ds = b.getAttribute("data-stage");
         chooseFocus(ds === "" ? null : +ds);
       });
+    });
+    $$(".js-tip-dismiss").forEach(function (b) {
+      b.addEventListener("click", function () { dismissTip(); });
     });
 
     $$(".js-notes").forEach(function (ta) {

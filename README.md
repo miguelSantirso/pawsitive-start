@@ -89,14 +89,14 @@ pawsitive-start/
 
 - All state is stored in the browser's `localStorage` (key `pawsitive-start-v2`, schema `v: 1`) — no account, no server, nothing leaves the device.
 - Per exercise: step checkboxes, mastery-criteria checkboxes, "mastered" flag, notes, timers.
-- Global: overall % ring, per-stage segmented bars, guilt-free practice-day streak, and **Export / Import backup** buttons in the footer for moving between devices.
+- Global: overall % ring, per-stage segmented bars, and **Export / Import backup** buttons in the footer for moving between devices.
 - Clearing your browser data resets the course. There's also a "Reset progress…" button in the footer.
 
 ### Round 6 — adaptive returning-user behaviour
 
 The home page and completion flows adapt at runtime to saved progress; every page stays fully static and no-JS still works.
 
-- **Adaptive home.** With no progress, home shows the full onboarding hero. Once any progress exists (a checked step or criterion, a mastered exercise, a note, or a practice day), the hero collapses into a one-line "welcome back" strip (ring, counts, "Saved on this device ✓"). The check runs in a tiny inline script in `index.html` before first paint to avoid a flash, and mirrors `hasProgress()` in `app.js` (a documented validation invariant).
+- **Adaptive home.** With no progress, home shows the full onboarding hero. Once any progress exists (a checked step or criterion, a mastered exercise, or a note), the home adapts to a simpler returning view. The check runs in a tiny inline script in `index.html` before first paint to avoid a flash, and mirrors `hasProgress()` in `app.js` (a documented validation invariant).
 - **Tip of the day.** Also returning-only: one short tip per local calendar day, picked deterministically from `build/data_rules.py` (`TIPS`), biased toward the user's current stage and linking to its source anchor on the golden-rules page. Tip data is injected into `index.html` only (not the shared `window.PS` manifest).
 - **Course overview.** `course.html` doubles as the "you are here" map: overall ring, current stage, per-stage "next up" links, an overlapping-stage timeline, and live milestones (no badge wall, no counts that frame undone work as debt). The topbar score link points here.
 - **Next up after mastery.** Marking an exercise mastered offers "Next up: …" (or "Start Stage N" at a stage boundary) plus an equal-weight "Done for today". The static exercise footnav stays sequence order and is labelled "Next in the stage".

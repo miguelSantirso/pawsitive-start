@@ -106,7 +106,7 @@ HOW_IT_WORKS = [
     {"e": "🐾", "t": "One exercise at a time, a few minutes",
      "d": "Do today's focus exercise, tick the steps as you go, and check the Mastery criteria. When it's solid, mark it mastered and celebrate — small wins stack."},
     {"e": "🧰", "t": "Stuck? Every exercise has a safety net",
-     "d": "Troubleshooting tips under each exercise, the Golden Rules page for principles, and gentle 'consistent, not perfect' progress. Your streak never gets punished."},
+     "d": "Troubleshooting tips under each exercise, the Golden Rules page for principles, and gentle 'consistent, not perfect' progress."},
 ]
 
 # Tip of the day (WP2). Each tip is a short restatement of content already
