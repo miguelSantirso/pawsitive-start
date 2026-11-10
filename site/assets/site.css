@@ -793,11 +793,27 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
 }
 .course-stage.is-done { border-color: color-mix(in srgb, var(--ok) 35%, var(--line)); }
 .course-stage-head { display: flex; align-items: flex-start; gap: 14px; }
-.course-stage-head > div { min-width: 0; flex: 1; }
+.course-stage-head .course-stage-copy { min-width: 0; flex: 1; display: flow-root; }
 .course-stage-head h2 { margin: 0; font-size: 1.25rem; }
 .course-stage-head h2 a { color: var(--ink); text-decoration: none; }
 .course-stage-head h2 a:hover { color: var(--accent-ink); text-decoration: underline; }
 .course-stage-head .stage-meta { margin-top: 3px; }
+.course-stage .stage-index {
+  float: left;
+  display: inline;
+  width: auto; height: auto;
+  margin: 0.12em 0.45em 0 0;
+  padding: 0;
+  border: 0; border-radius: 0;
+  background: none;
+  color: var(--sx, var(--accent-ink));
+  font-weight: 700; font-size: 1.05rem;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 520px) {
+  .course-stage-grid .stage-index { width: auto; height: auto; font-size: 0.95rem; }
+}
 .course-stage .stage-purpose { margin: 12px 0 14px; -webkit-line-clamp: unset; display: block; }
 .course-stage .progress-row { margin: 0 0 8px; }
 .course-stage .badge-done {
