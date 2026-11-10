@@ -107,6 +107,54 @@ def manifest_script():
     return "<script>window.PS=" + payload + ";</script>"
 
 
+def home_mode_script():
+    """Set data-home="returning" before first paint on the home page only.
+
+    Round-6 validation invariant: this derived check MUST mirror hasProgress()
+    in site/assets/app.js exactly (it is duplicated here to avoid a flash of
+    the onboarding hero on returning visits). Ignore savedAt, ignore empty
+    per-exercise records; any mastered exercise, any true step/criteria flag,
+    any non-blank note, or any practice day means progress exists.
+    """
+    return '''<script>
+(function () {
+  try {
+    var raw = localStorage.getItem("pawsitive-start-v2");
+    if (!raw) return;
+    var st = JSON.parse(raw);
+    if (!st || typeof st !== "object" || st.v !== 1) return;
+    if (!st.ex || typeof st.ex !== "object" || Array.isArray(st.ex)) return;
+    function anyTrue(a) {
+      if (!a) return false;
+      for (var i = 0; i < a.length; i++) if (a[i]) return true;
+      return false;
+    }
+    var key, inf;
+    var notes = st.notes && typeof st.notes === "object" && !Array.isArray(st.notes) ? st.notes : {};
+    var days = Array.isArray(st.days) ? st.days : [];
+    for (key in st.ex) {
+      if (!Object.prototype.hasOwnProperty.call(st.ex, key)) continue;
+      inf = st.ex[key] || {};
+      if (inf.m || anyTrue(inf.s) || anyTrue(inf.c)) {
+        document.documentElement.setAttribute("data-home", "returning");
+        return;
+      }
+    }
+    for (key in notes) {
+      if (Object.prototype.hasOwnProperty.call(notes, key) &&
+          notes[key] && String(notes[key]).trim()) {
+        document.documentElement.setAttribute("data-home", "returning");
+        return;
+      }
+    }
+    if (days.length) {
+      document.documentElement.setAttribute("data-home", "returning");
+    }
+  } catch (e) {}
+})();
+</script>'''
+
+
 def topbar(P, page, subbar=False, stage=None):
     score = f'<a class="score js-score" href="{P}index.html#progress">0/{TOTAL} mastered</a>'
     if page == "exercise":
@@ -171,8 +219,8 @@ def shell(title, desc, P, body, page, colorclass="", subbar=False,
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="{BRAND}">
 <link rel="preload" as="font" type="font/woff2" href="{P}assets/fonts/fraunces.woff2" crossorigin>
-<link rel="stylesheet" href="{P}assets/site.css?v=10">
-<script src="{P}assets/app.js?v=8" data-root="{P}" defer></script>
+<link rel="stylesheet" href="{P}assets/site.css?v=11">
+<script src="{P}assets/app.js?v=9" data-root="{P}" defer></script>
 {manifest_script()}
 {extra_head}
 </head>
@@ -236,6 +284,15 @@ def home_body():
 <p class="lede">A step-by-step course for the first weeks after adoption: six stages, {TOTAL} short exercises, a few calm minutes at a time. No account and no experience needed.</p>
 </section>
 
+<section class="welcome-strip js-welcome-strip" aria-label="Welcome back" hidden>
+<div class="ring" data-progress="all"><span class="hole"></span><span class="ring-num js-ring-num">0%</span></div>
+<div class="strip-copy">
+<p class="strip-line"><span class="js-strip-stage">Stage 1</span> · <span class="js-strip-mastered js-score">0/{TOTAL} mastered</span> · <span class="js-strip-days">0 practice days this week</span></p>
+<p class="strip-sub"><span class="js-strip-save strip-save">Saved on this device ✓</span> · <a href="golden-rules.html">Rules</a></p>
+</div>
+<a class="strip-link" href="course.html" aria-label="Course overview"><span>Course overview</span>{svg("chevron-right")}</a>
+</section>
+
 <section class="today-card js-focus" data-href="exercises/" aria-labelledby="today-title">
 <div class="today-top"><span class="kicker js-focus-kicker">Today's focus</span><span class="today-meta js-focus-meta">{first_meta}</span></div>
 <h2 class="today-title js-focus-title" id="today-title">{esc(first_ex["title"])}</h2>
@@ -246,7 +303,9 @@ def home_body():
 </div>
 </section>
 
-<section class="progress-panel" id="progress" aria-labelledby="progress-h">
+<!-- WP2: tip of the day slot (insert directly after the Today card). -->
+
+<section class="progress-panel home-progress" id="progress" aria-labelledby="progress-h">
 <div class="ring" data-progress="all"><span class="hole"></span><span class="ring-num js-ring-num">0%</span></div>
 <div class="progress-copy">
 <h2 id="progress-h" class="kicker">Your progress</h2>
@@ -267,10 +326,12 @@ def home_body():
 {stage_rows("")}
 </ol>
 
+<div class="home-principles">
 <div class="section-head"><h2>How this works</h2></div>
 {principles()}
+</div>
 
-<div class="callout tip">
+<div class="callout tip home-rules-callout">
 <h3>Read this once</h3>
 <p>The <a href="golden-rules.html">golden rules</a> explain rewards, timing, body language and the 3-3-3 adjustment clock. Five quiet minutes there saves weeks of guesswork later.</p>
 </div>
@@ -767,7 +828,7 @@ def main():
         f"{BRAND} — dog training in small, calm steps",
         f"A step-by-step course for newly adopted shelter dogs: six stages, {TOTAL} short exercises, a few calm minutes at a time.",
         "", home_body(), "home", bare_title=True,
-        body_attrs=' data-page="home"')))
+        body_attrs=' data-page="home"', extra_head=home_mode_script())))
     pages.append(("course.html", shell(
         "The course",
         "Six stages and 33 short exercises that take a new rescue dog from decompression to everyday confidence.",

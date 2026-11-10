@@ -481,6 +481,77 @@ main.shell.narrow { max-width: 760px; }
 .home-head h1 { margin: 8px 0 10px; max-width: 18ch; }
 .home-head .lede { max-width: 56ch; }
 
+/* Round 6 / WP1 — returning-user home: the onboarding hero collapses into a
+   compact welcome-back strip. CSS keys off data-home, set before first paint
+   by the inline check in index.html and kept honest by renderHomeMode(). */
+.welcome-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px 14px;
+  min-height: 60px;
+  padding: 8px 14px;
+  margin: 12px 0 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+}
+.welcome-strip .ring { width: 48px; height: 48px; }
+.welcome-strip .ring .hole { width: 36px; height: 36px; }
+.welcome-strip .ring-num { font-size: 0.68rem; }
+.strip-copy { flex: 1; min-width: 0; }
+.strip-line {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+.strip-line .js-strip-days { color: var(--muted); font-weight: 600; }
+.strip-sub {
+  margin: 2px 0 0;
+  font-size: 0.74rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+.strip-sub a { font-weight: 650; }
+.strip-save { color: var(--ok); font-weight: 650; }
+.strip-link {
+  display: inline-flex; align-items: center; gap: 2px;
+  flex: 0 0 auto;
+  min-height: 44px; padding: 0 2px;
+  color: var(--accent-ink);
+  font-size: 0.76rem; font-weight: 650;
+  text-decoration: none; white-space: nowrap;
+}
+.strip-link svg { width: 16px; height: 16px; }
+.strip-link:hover { text-decoration: underline; }
+
+[data-home="returning"] .welcome-strip { display: flex !important; }
+[data-home="returning"] .home-head,
+[data-home="returning"] .home-principles,
+[data-home="returning"] .home-progress,
+[data-home="returning"] .home-rules-callout { display: none; }
+[data-home="returning"] .today-card { margin-top: 18px; }
+
+@media (max-width: 420px) {
+  .welcome-strip { padding: 8px 10px; gap: 8px; }
+  .welcome-strip .ring { width: 42px; height: 42px; }
+  .welcome-strip .ring .hole { width: 32px; height: 32px; }
+  .welcome-strip .ring-num { font-size: 0.62rem; }
+  .strip-line { font-size: 0.74rem; line-height: 1.3; }
+  .strip-sub { font-size: 0.68rem; line-height: 1.3; }
+  .strip-link span { display: none; }
+  .strip-link { min-width: 44px; justify-content: center; }
+}
+@media (max-width: 360px) {
+  .welcome-strip { padding: 8px; gap: 8px 6px; }
+  .welcome-strip .ring { width: 36px; height: 36px; }
+  .welcome-strip .ring .hole { width: 27px; height: 27px; }
+  .welcome-strip .ring-num { font-size: 0.56rem; }
+  .strip-line { font-size: 0.7rem; }
+  .strip-sub { font-size: 0.64rem; }
+}
+
 .today-card {
   position: relative;
   margin: 26px 0 18px;
