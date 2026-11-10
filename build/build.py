@@ -24,6 +24,33 @@ from data import STAGES, EXERCISES, MANIFEST  # noqa: E402
 
 BRAND = "Pawsitive Start"
 TOTAL = len(EXERCISES)
+EX_BY_SLUG = {row["ex"]["slug"]: row for row in EXERCISES}
+TAG_LABELS = {
+    "calm": "Calm",
+    "leash": "Leash",
+    "alone-time": "Alone time",
+    "home-life": "Home life",
+    "bonding": "Bonding",
+    "handling": "Handling",
+}
+
+
+def tag_label(tag):
+    return TAG_LABELS.get(tag, tag.replace("-", " ").capitalize())
+
+
+def seq_advice(e):
+    """Calm, advice-only 'do this first' line for sequential exercises (WP4)."""
+    if not e.get("seq"):
+        return ""
+    reason = e.get("seq_reason", "")
+    after = e.get("seq_after")
+    if after and after in EX_BY_SLUG:
+        return f'After {EX_BY_SLUG[after]["ex"]["title"]}: {reason}'
+    if reason:
+        return reason[0].upper() + reason[1:]
+    return ""
+
 
 
 def esc(s):
@@ -229,8 +256,8 @@ def shell(title, desc, P, body, page, colorclass="", subbar=False,
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="{BRAND}">
 <link rel="preload" as="font" type="font/woff2" href="{P}assets/fonts/fraunces.woff2" crossorigin>
-<link rel="stylesheet" href="{P}assets/site.css?v=13">
-<script src="{P}assets/app.js?v=11" data-root="{P}" defer></script>
+<link rel="stylesheet" href="{P}assets/site.css?v=14">
+<script src="{P}assets/app.js?v=12" data-root="{P}" defer></script>
 {manifest_script()}
 {extra_head}
 </head>
@@ -311,6 +338,23 @@ def home_body():
 <a class="btn btn-primary js-focus-link" href="{first_href}">{svg("play")} <span class="js-focus-link-text">Start exercise</span></a>
 <a class="btn btn-quiet" href="course.html">See the full course</a>
 </div>
+<div class="focus-alt js-focus-alt" hidden>
+<p class="focus-alt-lead">Also good today</p>
+<div class="focus-alt-chips js-focus-alt-chips" role="list"></div>
+</div>
+</section>
+
+<!-- WP4: soft, inline self-placement prompt. Shown only for returning users
+     until answered, and never at first open. -->
+<section class="placement-prompt js-placement-prompt" aria-labelledby="placement-h" hidden>
+<h2 id="placement-h">Where is your dog right now?</h2>
+<p class="placement-text">This only changes where we suggest you start. Every stage stays open, and Stage 1 is always worth a read — especially the first-week safety notes.</p>
+<div class="placement-options">
+<button type="button" class="btn btn-quiet js-placement" data-stage="1" aria-pressed="false">Just home</button>
+<button type="button" class="btn btn-quiet js-placement" data-stage="2" aria-pressed="false">Settling in</button>
+<button type="button" class="btn btn-quiet js-placement" data-stage="4" aria-pressed="false">Out and about</button>
+</div>
+<button type="button" class="btn btn-ghost js-placement-skip">Not sure — start at the beginning</button>
 </section>
 
 <!-- WP2: tip of the day slot (insert directly after the Today card). -->
@@ -337,7 +381,7 @@ def home_body():
 </div>
 
 <div class="section-head"><h2>Your course</h2><a href="course.html">View all stages →</a></div>
-<p class="section-note">Work through the stages in order. Each one makes the next easier.</p>
+<p class="section-note">Stages build on each other — the order helps most, and starting the next while you finish the last is normal. Every stage and exercise stays open.</p>
 <ol class="stage-list">
 {stage_rows("")}
 </ol>
@@ -547,6 +591,18 @@ def settings_body():
 </section>
 
 <section class="settings-card">
+<h2>Where is your dog right now?</h2>
+<p>This only changes where the Today card suggests you start. Every stage stays open, and Stage 1 is always worth a read — especially the first-week safety notes. Changes save automatically.</p>
+<div class="placement-options settings-placement" role="group" aria-label="Where is your dog right now?">
+<button type="button" class="btn btn-quiet placement-btn js-placement-set" data-stage="1" aria-pressed="false">Just home<span class="placement-sub">Stage 1</span></button>
+<button type="button" class="btn btn-quiet placement-btn js-placement-set" data-stage="2" aria-pressed="false">Settling in<span class="placement-sub">Stages 2–3</span></button>
+<button type="button" class="btn btn-quiet placement-btn js-placement-set" data-stage="4" aria-pressed="false">Out and about<span class="placement-sub">Stage 4 onwards</span></button>
+<button type="button" class="btn btn-quiet placement-btn js-placement-set" data-stage="" aria-pressed="false">Start at the beginning<span class="placement-sub">Stage 1 onwards</span></button>
+</div>
+<p class="small">“Start at the beginning” clears the placement and puts the suggested next exercise back at the top of the course.</p>
+</section>
+
+<section class="settings-card">
 <h2>Back up your progress</h2>
 <p>Progress lives in this browser. Export a backup before changing phones, clearing browser data, or reinstalling the app.</p>
 <div class="data-actions">
@@ -609,10 +665,14 @@ def stage_body(s):
     n = s["num"]
     rows = []
     for k, e in enumerate(s["exercises"], 1):
+        tags_html = "".join(f'<span class="ex-tag">{esc(tag_label(t))}</span>' for t in e["tags"])
+        supporting_html = "" if e.get("core", True) else '<span class="ex-flag">Supporting</span>'
+        advice = seq_advice(e)
+        seq_html = f'<span class="ex-seq">{esc(advice)}</span>' if advice else ""
         rows.append(f'''<li class="ex-row" data-ex="{esc(e["slug"])}">
 <a class="ex-row-link" href="exercises/{esc(e["slug"])}.html">
 <span class="ex-num">{k:02d}</span>
-<span class="grow"><span class="ex-title">{esc(e["title"])}</span><span class="ex-sub">{esc(e["time"])}</span></span>
+<span class="grow"><span class="ex-title">{esc(e["title"])}</span><span class="ex-sub">{esc(e["time"])}</span><span class="ex-tags">{tags_html}{supporting_html}</span>{seq_html}</span>
 <span class="status-slot"></span>
 <span class="chevron">{svg("chevron-right")}</span>
 </a>
@@ -653,7 +713,7 @@ def stage_body(s):
 
 <section class="exercise-list-card">
 <div class="section-head"><h2>Exercises</h2><span class="small">{len(s["exercises"])} in this stage</span></div>
-<p class="section-note">Do these in order when you can. Jumping around is fine; the order just helps most dogs most.</p>
+<p class="section-note">Stages build on each other — the order helps most, and starting the next while you finish the last is normal. Jumping around is fine: core exercises are the essentials, and supporting ones can wait.</p>
 <ol class="ex-list">{''.join(rows)}</ol>
 </section>
 
@@ -689,6 +749,12 @@ def exercise_body(row):
         src = f'<p class="learn-more">Source: <a href="{esc(e["source"]["url"])}" target="_blank" rel="noopener">{esc(e["source"]["label"])}</a></p>'
     need_items = "".join(f"<li>{esc(x)}</li>" for x in e["need"])
 
+    advice = seq_advice(e)
+    seq_callout = (
+        f'<div class="callout info seq-callout"><h3>Good to know before you start</h3><p>{esc(advice)}</p></div>\n\n'
+        if advice else ""
+    )
+
     gi = row["i"]
     prev_row = EXERCISES[gi - 2] if gi > 1 else None
     next_row = EXERCISES[gi] if gi < len(EXERCISES) else None
@@ -718,7 +784,7 @@ def exercise_body(row):
 
 <div class="goal"><span class="goal-label">The goal</span>{esc(e["goal"])}</div>
 
-<div class="exercise-actions">
+{seq_callout}<div class="exercise-actions">
 <button type="button" class="btn btn-primary js-session-start">{svg("play")} Start guided session</button>
 <a class="btn btn-quiet" href="#steps">See all steps</a>
 </div>

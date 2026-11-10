@@ -15,6 +15,7 @@ STAGE = {
     "exercises": [
         {
             "slug": "gear-comfort",
+            "tags": ["handling", "leash"],
             "title": "Harness & lead = no big deal",
             "emoji": "🦺",
             "time": "2 minutes × 2 a day",
@@ -51,6 +52,7 @@ STAGE = {
         },
         {
             "slug": "leash-zen",
+            "tags": ["leash"],
             "title": "Loose-leash walking, indoors first",
             "emoji": "🚶",
             "time": "3–5 minutes × 2 a day",
@@ -86,6 +88,10 @@ STAGE = {
         },
         {
             "slug": "street-loose-leash",
+            "tags": ["leash"],
+            "seq": True,
+            "seq_after": "leash-zen",
+            "seq_reason": "the indoor slack-leash game comes first — the same rule is much easier to learn where nothing competes for attention.",
             "title": "Loose leash, outdoors",
             "emoji": "🏘️",
             "time": "10–20 minutes per walk",
@@ -124,6 +130,7 @@ STAGE = {
         },
         {
             "slug": "door-wait",
+            "tags": ["home-life"],
             "title": "Wait at every door",
             "emoji": "🚪",
             "time": "3 minutes × 3 a day",
@@ -160,6 +167,7 @@ STAGE = {
         },
         {
             "slug": "sniffari",
+            "tags": ["calm", "leash"],
             "title": "The decompression sniff walk",
             "emoji": "🌸",
             "time": "15–30 minutes, several times a week, forever",
@@ -195,6 +203,7 @@ STAGE = {
         },
         {
             "slug": "calm-greet",
+            "tags": ["leash", "calm"],
             "title": "Walking past people and dogs, calmly",
             "emoji": "👋",
             "time": "Folded into every walk",

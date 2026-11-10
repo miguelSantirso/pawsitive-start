@@ -15,6 +15,7 @@ STAGE = {
     "exercises": [
         {
             "slug": "lured-sit",
+            "tags": ["home-life", "bonding"],
             "title": "Sit on cue",
             "emoji": "🪑",
             "time": "3–5 minutes × 2 a day",
@@ -54,6 +55,7 @@ STAGE = {
         },
         {
             "slug": "lured-down",
+            "tags": ["calm", "home-life"],
             "title": "Down on cue",
             "emoji": "⏬",
             "time": "3–5 minutes × 2 a day",
@@ -89,6 +91,7 @@ STAGE = {
         },
         {
             "slug": "mat-settle",
+            "tags": ["calm"],
             "title": "Relax on a mat",
             "emoji": "🛋️",
             "time": "5 minutes × 2 a day",
@@ -129,6 +132,7 @@ STAGE = {
         },
         {
             "slug": "indoor-recall",
+            "tags": ["bonding", "home-life"],
             "title": "Come when called — indoors",
             "emoji": "🏃",
             "time": "2 minutes × 4 a day",
@@ -163,6 +167,7 @@ STAGE = {
         },
         {
             "slug": "food-leave-it",
+            "tags": ["home-life"],
             "title": "Leave it — ignoring things on purpose",
             "emoji": "🚫",
             "time": "2 minutes × 3 a day",
@@ -198,6 +203,7 @@ STAGE = {
         },
         {
             "slug": "trade-and-drop",
+            "tags": ["home-life", "bonding"],
             "title": "Drop it — the trade game",
             "emoji": "🎁",
             "time": "2 minutes × 2 a day",

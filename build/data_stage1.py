@@ -21,6 +21,7 @@ STAGE = {
     "exercises": [
         {
             "slug": "safe-space",
+            "tags": ["calm", "home-life"],
             "title": "Build your dog's safe base",
             "emoji": "🛏️",
             "time": "20 minutes to set up, then it lives there",
@@ -59,6 +60,7 @@ STAGE = {
         },
         {
             "slug": "do-nothing-sitting",
+            "tags": ["calm", "bonding"],
             "title": "The daily nothing habit",
             "emoji": "🧘",
             "time": "10–20 minutes, twice a day",
@@ -93,6 +95,7 @@ STAGE = {
         },
         {
             "slug": "toilet-routine",
+            "tags": ["home-life"],
             "title": "The toilet drill that prevents accidents",
             "emoji": "🚽",
             "time": "5 minutes per trip, on schedule all day",
@@ -132,6 +135,7 @@ STAGE = {
         },
         {
             "slug": "scatter-hand-feed",
+            "tags": ["bonding", "home-life"],
             "title": "Every meal becomes a good-news game",
             "emoji": "🍖",
             "time": "5–10 minutes per meal",

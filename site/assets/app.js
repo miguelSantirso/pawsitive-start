@@ -4,7 +4,9 @@
    Every page includes <script>window.PS = {...manifest}</script>:
      PS.slugs  : [slug, ...] in curriculum order
      PS.stages : { "1": {n, e, w}, ... }
-     PS.ex     : { slug: { t, g, st, s, cr } }
+     PS.ex     : { slug: { t, g, st, s, cr, f, core } }
+       f    : first tag (calm / leash / alone-time / home-life / bonding / handling)
+       core : false only for supporting exercises that can wait
    Exercise pages: <body data-page="exercise" data-slug="...">
    ============================================================ */
 (function () {
@@ -16,7 +18,7 @@
   if (!root) root = "./";
 
   /* ---------- state ---------- */
-  function blank() { return { v: 1, savedAt: null, ex: {}, days: [], notes: {} }; }
+  function blank() { return { v: 1, savedAt: null, ex: {}, days: [], notes: {}, focus: null, focusAsked: false }; }
 
   var storageOK = true;
   var memory = null;
@@ -40,15 +42,29 @@
     memory = null;
   }
 
+  /* WP4: optional self-placement. Additive only — no schema version bump;
+     invalid imported values are ignored and old backups still import. */
+  function validStage(n) {
+    n = +n;
+    return (n >= 1 && n <= 6 && n % 1 === 0) ? n : null;
+  }
+
   function normalize(st) {
     if (!st || typeof st !== "object" || st.v !== 1) return null;
     if (!st.ex || typeof st.ex !== "object" || Array.isArray(st.ex)) return null;
+    var focus = null, fs = null;
+    if (st.focus && typeof st.focus === "object" && !Array.isArray(st.focus)) {
+      fs = validStage(st.focus.stage);
+      if (fs) focus = { stage: fs };
+    }
     return {
       v: 1,
       savedAt: st.savedAt || null,
       ex: st.ex,
       days: Array.isArray(st.days) ? st.days : [],
-      notes: st.notes && typeof st.notes === "object" && !Array.isArray(st.notes) ? st.notes : {}
+      notes: st.notes && typeof st.notes === "object" && !Array.isArray(st.notes) ? st.notes : {},
+      focus: focus,
+      focusAsked: st.focusAsked === true
     };
   }
 
@@ -172,6 +188,14 @@
 
   function stageOf(sg) { var m = exMeta(sg); return m && m.st ? String(m.st) : null; }
   function stageSlugs(n) { return slugs().filter(function (s) { return String((exMeta(s) || {}).st || "") === String(n); }); }
+  function focusStage() { return validStage(state.focus && state.focus.stage); }
+  function firstIndexInStage(n) {
+    var all = slugs();
+    for (var i = 0; i < all.length; i++) {
+      if (stageOf(all[i]) === String(n)) return i;
+    }
+    return -1;
+  }
   function stageNumbers() {
     var stages = (window.PS && PS.stages) || {};
     var out = [];
@@ -187,15 +211,25 @@
   }
 
   /* ---------- progress math ---------- */
-  /* First unmastered exercise in curriculum order. With fromSlug, search from
-     that position forward only, then fall back to the top so a mid-course
-     user still reaches the earliest unmastered exercise. */
+  /* First unmastered exercise in curriculum order. With an explicit fromSlug
+     (WP5's post-mastery flow), search forward from that position only, then
+     fall back to the top so a mid-course user still reaches the earliest
+     unmastered exercise — self-placement never overrides a sequence
+     continuation. With no fromSlug, start at the user's placement stage when
+     one is set, fall forward through the course, then fall back to the top so
+     earlier unmastered content is never lost. */
   function nextUp(fromSlug) {
     var all = slugs();
-    var start = 0, i;
+    var start = 0, i, at;
     if (fromSlug) {
-      var at = all.indexOf(fromSlug);
+      at = all.indexOf(fromSlug);
       if (at !== -1) start = at;
+    } else {
+      var fs = focusStage();
+      if (fs) {
+        at = firstIndexInStage(fs);
+        if (at !== -1) start = at;
+      }
     }
     for (i = start; i < all.length; i++) if (!isMastered(all[i])) return all[i];
     for (i = 0; i < start; i++) if (!isMastered(all[i])) return all[i];
@@ -226,6 +260,7 @@
     renderCourse();
     renderStatusPills();
     renderToday();
+    renderPlacement();
     renderTip();
     renderStreak();
     renderExercisePage();
@@ -421,6 +456,16 @@
     });
   }
 
+  /* WP4 tag hints: one short, static "good when your dog…" line per tag. */
+  var TAG_HINTS = {
+    calm: "needs help switching off",
+    leash: "is ready to practise the lead",
+    "alone-time": "is working on being apart",
+    "home-life": "is settling into home routines",
+    bonding: "is building trust with you",
+    handling: "is ready for gentle handling"
+  };
+
   function renderToday() {
     var card = $(".js-focus");
     if (!card) return;
@@ -430,6 +475,7 @@
     var text = $(".js-focus-text", card);
     var link = $(".js-focus-link", card);
     var linkText = $(".js-focus-link-text", card);
+    var alt = $(".js-focus-alt", card);
     var sg = firstUnmastered();
 
     if (!sg) {
@@ -440,6 +486,7 @@
       if (text) text.textContent = "Keep the little games going and revisit anything shaky in a month. Dogs love a refresher.";
       if (link) link.setAttribute("href", "course.html");
       if (linkText) linkText.textContent = "Revisit the course";
+      if (alt) alt.hidden = true;
       return;
     }
 
@@ -453,6 +500,63 @@
     if (text) text.textContent = m.g || "";
     if (link) link.setAttribute("href", href);
     if (linkText) linkText.textContent = "Start exercise";
+    renderTodayAlternatives(card, alt, sg, m.st);
+  }
+
+  /* Up to two alternatives from the recommended exercise's stage. Returning
+     users only, so the first-run home stays exactly as it was. */
+  function renderTodayAlternatives(card, alt, sg, stage) {
+    if (!alt) return;
+    var chips = $(".js-focus-alt-chips", alt);
+    if (!chips) return;
+    if (!hasProgress()) { alt.hidden = true; return; }
+    var list = slugs().filter(function (s) {
+      return s !== sg && !isMastered(s) && stageOf(s) === String(stage);
+    }).slice(0, 2);
+    if (!list.length) { alt.hidden = true; return; }
+    chips.innerHTML = "";
+    list.forEach(function (s) {
+      var mm = exMeta(s) || {};
+      var a = document.createElement("a");
+      a.className = "chip focus-chip";
+      a.setAttribute("role", "listitem");
+      a.setAttribute("href", (card.getAttribute("data-href") || "exercises/") + s + ".html");
+      var t = document.createElement("span");
+      t.className = "focus-chip-title";
+      t.textContent = mm.t || s;
+      var h = document.createElement("span");
+      h.className = "focus-chip-hint";
+      h.textContent = "Good when your dog " + (TAG_HINTS[mm.f] || "is ready for something different");
+      a.appendChild(t);
+      a.appendChild(h);
+      chips.appendChild(a);
+    });
+    alt.hidden = false;
+  }
+
+  /* WP4 self-placement: a soft home prompt (returning users only, until
+     answered) and the editable Settings control. */
+  function renderPlacement() {
+    var fs = focusStage();
+    var group = fs === 1 ? 1 : (fs === 2 || fs === 3) ? 2 : (fs ? 4 : 0);
+    $$(".js-placement, .js-placement-set").forEach(function (b) {
+      var ds = b.getAttribute("data-stage");
+      var pressed = ds === "" ? group === 0 : group === +ds;
+      b.setAttribute("aria-pressed", pressed ? "true" : "false");
+    });
+
+    var prompt = $(".js-placement-prompt");
+    if (prompt && document.body.getAttribute("data-page") === "home") {
+      prompt.hidden = !(hasProgress() && !state.focusAsked && !fs);
+    }
+  }
+
+  function chooseFocus(stage) {
+    var s = validStage(stage);
+    state.focus = s ? { stage: s } : null;
+    state.focusAsked = true;
+    save();
+    announce(s ? "Starting suggestion set to Stage " + s + "." : "Starting at the beginning of the course.");
   }
 
   function renderTip() {
@@ -1019,6 +1123,19 @@
           announce("Practice day logged.");
           showToast("Practice logged. Same time tomorrow.");
         }
+      });
+    });
+
+    $$(".js-placement").forEach(function (b) {
+      b.addEventListener("click", function () { chooseFocus(+b.getAttribute("data-stage")); });
+    });
+    $$(".js-placement-skip").forEach(function (b) {
+      b.addEventListener("click", function () { chooseFocus(null); });
+    });
+    $$(".js-placement-set").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var ds = b.getAttribute("data-stage");
+        chooseFocus(ds === "" ? null : +ds);
       });
     });
 

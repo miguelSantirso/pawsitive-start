@@ -15,6 +15,10 @@ STAGE = {
     "exercises": [
         {
             "slug": "long-line-recall",
+            "tags": ["leash", "bonding"],
+            "seq": True,
+            "seq_after": "indoor-recall",
+            "seq_reason": "the indoor come game comes first, then the same promise moves outdoors on a long line.",
             "title": "Outdoor come-on-a-line",
             "emoji": "🎉",
             "time": "5 minutes × 3 a week",
@@ -50,6 +54,8 @@ STAGE = {
         },
         {
             "slug": "spin-trick",
+            "tags": ["bonding"],
+            "core": False,
             "title": "Trick: spin",
             "emoji": "🌀",
             "time": "2 minutes × 2 a day",
@@ -84,6 +90,8 @@ STAGE = {
         },
         {
             "slug": "high-five",
+            "tags": ["bonding"],
+            "core": False,
             "title": "Trick: high five",
             "emoji": "🖐️",
             "time": "2 minutes × 2 a day",
@@ -119,6 +127,7 @@ STAGE = {
         },
         {
             "slug": "guest-doors",
+            "tags": ["home-life", "calm"],
             "title": "Guest arrivals without chaos",
             "emoji": "🚪",
             "time": "Rehearse 5–10 minutes weekly",
@@ -154,6 +163,7 @@ STAGE = {
         },
         {
             "slug": "car-calm",
+            "tags": ["calm", "home-life"],
             "title": "Car rides without panic",
             "emoji": "🚗",
             "time": "10 minutes × 2 a week",
@@ -189,6 +199,7 @@ STAGE = {
         },
         {
             "slug": "graduation-plan",
+            "tags": ["home-life", "bonding"],
             "title": "Graduation: the next 30 days",
             "emoji": "🎓",
             "time": "One planning hour, once",

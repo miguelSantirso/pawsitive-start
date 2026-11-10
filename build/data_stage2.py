@@ -15,6 +15,7 @@ STAGE = {
     "exercises": [
         {
             "slug": "marker-word",
+            "tags": ["bonding"],
             "title": "Install your marker word ('Yes!')",
             "emoji": "💬",
             "time": "2 minutes × 3 a day",
@@ -51,6 +52,7 @@ STAGE = {
         },
         {
             "slug": "name-game",
+            "tags": ["bonding"],
             "title": "Name = look at me",
             "emoji": "📣",
             "time": "2 minutes × 3 a day",
@@ -85,6 +87,7 @@ STAGE = {
         },
         {
             "slug": "hand-target",
+            "tags": ["bonding", "handling"],
             "title": "Teach 'touch' — the power tool",
             "emoji": "🎯",
             "time": "2 minutes × 3 a day",
@@ -121,6 +124,7 @@ STAGE = {
         },
         {
             "slug": "consent-check",
+            "tags": ["handling", "bonding"],
             "title": "Pet the consent way",
             "emoji": "🤝",
             "time": "1–2 minutes, several times a day",
@@ -156,6 +160,7 @@ STAGE = {
         },
         {
             "slug": "gentle-mouth",
+            "tags": ["home-life", "bonding"],
             "title": "Gentle mouth — teeth off skin",
             "emoji": "🦷",
             "time": "2 minutes × a few times a day",
@@ -192,6 +197,7 @@ STAGE = {
         },
         {
             "slug": "signal-spotting",
+            "tags": ["bonding", "calm"],
             "title": "Learn your dog's five tells",
             "emoji": "🔎",
             "time": "10 minutes across the week",

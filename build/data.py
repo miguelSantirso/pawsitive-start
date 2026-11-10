@@ -31,6 +31,10 @@ if _missing:
 
 slugs_seen = set()
 SLUG_RE = re.compile(r"^[a-z0-9-]+$")
+# Closed vocabulary for the Today-card "also good today" hints (WP4).
+TAG_VOCAB = ("calm", "leash", "alone-time", "home-life", "bonding", "handling")
+ordered_slugs = []
+seq_checks = []
 
 for s in STAGES:
     n = s.get("num")
@@ -81,6 +85,39 @@ for s in STAGES:
                 err(f"stage {n} · {slug}: source missing label/url")
             if not str(src.get("url", "")).startswith("https://"):
                 err(f"stage {n} · {slug}: source url not https")
+        # WP4 optional metadata: tags are a closed vocabulary, core defaults
+        # true, and seq is advice only (never a lock).
+        tags = e.get("tags")
+        if not isinstance(tags, list) or not (1 <= len(tags) <= 2):
+            err(f"stage {n} · {slug}: tags must be a list of 1–2 values")
+        else:
+            for t in tags:
+                if t not in TAG_VOCAB:
+                    err(f"stage {n} · {slug}: unknown tag '{t}' (allowed: {', '.join(TAG_VOCAB)})")
+            if len(set(tags)) != len(tags):
+                err(f"stage {n} · {slug}: duplicate tags")
+        if "core" in e and not isinstance(e["core"], bool):
+            err(f"stage {n} · {slug}: core must be a bool")
+        if "seq" in e and not isinstance(e["seq"], bool):
+            err(f"stage {n} · {slug}: seq must be a bool")
+        if e.get("seq"):
+            reason = e.get("seq_reason")
+            if not isinstance(reason, str) or not reason.strip():
+                err(f"stage {n} · {slug}: seq_reason missing or empty")
+            if "seq_after" in e:
+                after = e["seq_after"]
+                if not isinstance(after, str) or not after:
+                    err(f"stage {n} · {slug}: seq_after must be a slug")
+                else:
+                    seq_checks.append((n, slug, after))
+        ordered_slugs.append(slug)
+
+# seq_after must point at an existing exercise earlier in curriculum order.
+for n, slug, after in seq_checks:
+    if after not in ordered_slugs:
+        err(f"stage {n} · {slug}: seq_after '{after}' does not exist")
+    elif ordered_slugs.index(after) >= ordered_slugs.index(slug):
+        err(f"stage {n} · {slug}: seq_after '{after}' must appear earlier in the curriculum")
 
 if ERRORS:
     print("OH NO — course validation errors:")
@@ -104,6 +141,8 @@ MANIFEST = {
         row["ex"]["slug"]: {
             "t": row["ex"]["title"], "g": row["ex"]["goal"],
             "st": row["stage"]["num"], "s": len(row["ex"]["steps"]), "cr": len(row["ex"]["criteria"]),
+            # WP4: first tag drives the Today-card hint; core marks supporting items.
+            "f": row["ex"]["tags"][0], "core": row["ex"].get("core", True),
         }
         for row in EXERCISES
     },

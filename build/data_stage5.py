@@ -15,6 +15,7 @@ STAGE = {
     "exercises": [
         {
             "slug": "crate-confidence",
+            "tags": ["alone-time", "home-life"],
             "title": "Make the crate a joy",
             "emoji": "📦",
             "time": "Meals + two short games a day",
@@ -53,6 +54,10 @@ STAGE = {
         },
         {
             "slug": "alone-staircase",
+            "tags": ["alone-time"],
+            "seq": True,
+            "seq_after": "crate-confidence",
+            "seq_reason": "the crate or gated-room routine comes first, so alone-time starts from a place your dog already trusts.",
             "title": "Alone-time training (the staircase)",
             "emoji": "🪜",
             "time": "A few graduated sessions most days",
@@ -92,6 +97,7 @@ STAGE = {
         },
         {
             "slug": "quiet-on-cue",
+            "tags": ["calm", "home-life"],
             "title": "Bark twice, then quiet",
             "emoji": "🤫",
             "time": "3 minutes × 2 a day + real moments",
@@ -127,6 +133,7 @@ STAGE = {
         },
         {
             "slug": "touch-and-vet-prep",
+            "tags": ["handling"],
             "title": "Handling, grooming & vet prep (with consent)",
             "emoji": "🩺",
             "time": "3 minutes × 3 a day",
@@ -166,6 +173,9 @@ STAGE = {
         },
         {
             "slug": "bowl-and-bones",
+            "tags": ["home-life"],
+            "seq": True,
+            "seq_reason": "start with the pre-screen: if your dog has ever frozen, stared, growled, snapped or eaten faster when you approach, pause this ladder and work with a force-free professional.",
             "title": "Meals and chews without guarding",
             "emoji": "🍲",
             "time": "Woven into every meal",
