@@ -378,8 +378,7 @@
 
       var doneEl = $(".js-stage-done", card);
       if (doneEl) {
-        doneEl.textContent = complete ? m + " of " + list.length + " done"
-          : (m === 0 ? "Not started yet" : m + " of " + list.length + " done");
+        doneEl.textContent = m === 0 ? "Not started yet" : "";
       }
 
       var stageNextWrap = $(".js-stage-next-wrap", card);
