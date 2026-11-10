@@ -229,8 +229,8 @@ def shell(title, desc, P, body, page, colorclass="", subbar=False,
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="{BRAND}">
 <link rel="preload" as="font" type="font/woff2" href="{P}assets/fonts/fraunces.woff2" crossorigin>
-<link rel="stylesheet" href="{P}assets/site.css?v=12">
-<script src="{P}assets/app.js?v=10" data-root="{P}" defer></script>
+<link rel="stylesheet" href="{P}assets/site.css?v=13">
+<script src="{P}assets/app.js?v=11" data-root="{P}" defer></script>
 {manifest_script()}
 {extra_head}
 </head>
@@ -356,29 +356,96 @@ def home_body():
 
 
 # ---------------------------------------------------------------- Course
+# Stage windows such as "Weeks 2–5" are normalised to a shared days scale for
+# the static overlap timeline. A course "month" is four weeks, which keeps
+# "Months 3–6" aligned with the end of "Weeks 6–12".
+_WHEN_UNIT_DAYS = {"day": 1, "week": 7, "month": 28}
+
+
+def when_span(when):
+    """Return (start_day, end_day) for a stage window such as "Weeks 2–5"."""
+    m = re.search(r"(day|week|month)s?\s+(\d+)\s*[–—−-]\s*(\d+)", when.lower())
+    if not m:
+        raise ValueError(f"Unrecognised stage window: {when!r}")
+    unit, start, end = m.group(1), int(m.group(2)), int(m.group(3))
+    factor = _WHEN_UNIT_DAYS[unit]
+    return start * factor, end * factor
+
+
 def course_body():
+    spans = [when_span(s["when"]) for s in STAGES]
+    max_day = max(end for _, end in spans)
+
+    timeline = []
+    for s, (start, end) in zip(STAGES, spans):
+        n = s["num"]
+        left = start / max_day * 100
+        width = (end - start) / max_day * 100
+        timeline.append(f'''<li class="timeline-row s{n}">
+<span class="timeline-key"><span class="timeline-num" aria-hidden="true">{n:02d}</span><span class="visually-hidden">Stage {n} · {esc(s["name"])}</span></span>
+<span class="timeline-track"><span class="timeline-bar" style="--start:{left:.2f}%;--len:{width:.2f}%"><span class="timeline-when">{esc(s["when"])}</span></span></span>
+</li>''')
+
     cards = []
     for s in STAGES:
         n = s["num"]
+        first = s["exercises"][0]
         cards.append(f'''<article class="course-stage s{n} js-stage-card" data-stage="{n}">
 <div class="course-stage-head">
 <span class="stage-index">{n:02d}</span>
-<div><h2><a href="stage-{n}.html">{esc(s["name"])}</a></h2><span class="stage-meta">{esc(s["when"])} · {len(s["exercises"])} exercises</span></div>
+<div><h2><a href="stage-{n}.html">{esc(s["name"])}</a></h2><span class="stage-meta">{esc(s["when"])} · {len(s["exercises"])} exercises</span><span class="stage-now">You are here</span></div>
 <span class="badge-done">Complete</span>
 </div>
 <p class="stage-purpose">{esc(s["purpose"])}</p>
 <div class="progress-row"><div class="segs" data-progress="{n}"></div><span class="progress-label js-prog-label"></span></div>
+<div class="stage-foot">
+<span class="stage-done-line js-stage-done">Not started yet</span>
+<span class="stage-next-wrap js-stage-next-wrap"><span aria-hidden="true"> · </span><span class="stage-next-label">next up:</span> <a class="stage-next js-stage-next" href="exercises/{esc(first["slug"])}.html"><span class="js-stage-next-title">{esc(first["title"])}</span></a></span>
+</div>
 <a class="stage-open" href="stage-{n}.html">Open stage {svg("arrow-right")}</a>
 </article>''')
+
+    first_row = EXERCISES[0]
+    first_href = f'exercises/{first_row["ex"]["slug"]}.html'
+    halfway = (TOTAL + 1) // 2
     body = f'''
-<section class="page-head">
+<section class="page-head course-head">
 <span class="kicker">The full course</span>
 <h1>Six stages, one calm dog.</h1>
-<p class="lede">Start with decompression, then build the everyday skills that keep a rescue dog safe, confident and at home. Do the stages in order; each one makes the next easier.</p>
-<div class="progress-row"><div class="progress" data-progress="all"><div class="progress-fill js-fill"></div></div><span class="progress-label js-prog-label"></span></div>
+<p class="lede">Start with decompression, then build the everyday skills that keep a rescue dog safe, confident and at home. Stages build on each other — the order helps most, and starting the next while you finish the last is normal.</p>
+<div class="course-here">
+<div class="ring" data-progress="all"><span class="hole"></span><span class="ring-num js-ring-num">0%</span></div>
+<div class="here-copy">
+<p class="here-kicker">You are here</p>
+<p class="here-line"><span class="js-course-stage">Stage 1</span><span aria-hidden="true"> · </span><span class="js-course-count">0 of {TOTAL} done</span><span class="js-course-next-wrap"><span aria-hidden="true"> · </span>next up: <a class="js-course-next" href="{first_href}">{esc(first_row["ex"]["title"])}</a></span></p>
+<p class="here-note js-course-note">A few calm minutes is plenty. The next exercise is always the recommended one.</p>
+</div>
+</div>
 </section>
 
+<section class="course-timeline" aria-labelledby="timeline-h">
+<div class="section-head"><h2 id="timeline-h">How the stages overlap</h2></div>
+<p class="section-note">Typical windows, not deadlines. Stages build on each other — starting the next while you finish the last is normal.</p>
+<ol class="timeline-list">{"".join(timeline)}</ol>
+<div class="timeline-axis" aria-hidden="true"><span></span><span class="timeline-axis-track"><span>Day 1</span><span>~3 months</span><span>~6 months</span></span></div>
+</section>
+
+<div class="section-head"><h2>Your stages</h2></div>
+<p class="section-note">Every stage is open. The “You are here” mark follows the next exercise in the course.</p>
 {''.join(cards)}
+
+<section class="milestones" aria-labelledby="milestones-h">
+<div class="section-head"><h2 id="milestones-h">Milestones</h2></div>
+<p class="section-note">A few moments worth noticing. They update as you go, and undo quietly if you change your mind.</p>
+<ul class="milestone-list">
+<li class="milestone" data-milestone="first"><span class="milestone-icon" aria-hidden="true"></span><span class="milestone-copy"><span class="milestone-title">First exercise mastered</span><span class="milestone-sub">The first small win — and the hardest part is starting.</span></span><span class="milestone-state">Not yet</span></li>
+<li class="milestone" data-milestone="stage1"><span class="milestone-icon" aria-hidden="true"></span><span class="milestone-copy"><span class="milestone-title">Stage 1 complete — decompression done</span><span class="milestone-sub">Safety, sleep and routine are in place.</span></span><span class="milestone-state">Not yet</span></li>
+<li class="milestone" data-milestone="seven-days"><span class="milestone-icon" aria-hidden="true"></span><span class="milestone-copy"><span class="milestone-title">Seven practice days logged</span><span class="milestone-sub">Any practice counts — there is no streak to lose.</span></span><span class="milestone-state">Not yet</span></li>
+<li class="milestone" data-milestone="halfway"><span class="milestone-icon" aria-hidden="true"></span><span class="milestone-copy"><span class="milestone-title">Halfway there</span><span class="milestone-sub">{halfway} of {TOTAL} exercises done.</span></span><span class="milestone-state">Not yet</span></li>
+<li class="milestone" data-milestone="stage-complete"><span class="milestone-icon" aria-hidden="true"></span><span class="milestone-copy"><span class="milestone-title">A full stage complete</span><span class="milestone-sub js-ms-stages">0 of {len(STAGES)} stages complete</span></span><span class="milestone-state">Not yet</span></li>
+<li class="milestone" data-milestone="course"><span class="milestone-icon" aria-hidden="true"></span><span class="milestone-copy"><span class="milestone-title">Course complete</span><span class="milestone-sub">All six stages done. Revisit anything you like.</span></span><span class="milestone-state">Not yet</span></li>
+</ul>
+</section>
 
 <div class="callout tip">
 <h3>Before you start</h3>

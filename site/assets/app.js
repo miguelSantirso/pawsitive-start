@@ -172,6 +172,15 @@
 
   function stageOf(sg) { var m = exMeta(sg); return m && m.st ? String(m.st) : null; }
   function stageSlugs(n) { return slugs().filter(function (s) { return String((exMeta(s) || {}).st || "") === String(n); }); }
+  function stageNumbers() {
+    var stages = (window.PS && PS.stages) || {};
+    var out = [];
+    for (var k in stages) {
+      if (Object.prototype.hasOwnProperty.call(stages, k)) out.push(String(k));
+    }
+    out.sort(function (a, b) { return (+a) - (+b); });
+    return out;
+  }
   function stageIsComplete(n) {
     var all = n ? stageSlugs(n) : [];
     return !!(all.length && all.every(isMastered));
@@ -214,6 +223,7 @@
     renderScore();
     renderProgressBars();
     renderStageCards();
+    renderCourse();
     renderStatusPills();
     renderToday();
     renderTip();
@@ -280,6 +290,103 @@
       var allDone = list.length && list.every(isMastered);
       $$(".js-stage-banner").forEach(function (b) { b.classList.toggle("show", !!allDone); });
     }
+  }
+
+  /* WP3 — course overview: one "You are here", per-stage next-up links and
+     live milestones. Progress rings/bars/segs are filled by renderProgressBars. */
+  function renderCourse() {
+    if (document.body.getAttribute("data-page") !== "course") return;
+
+    var all = slugs();
+    var done = all.filter(isMastered).length;
+    var nxt = nextUp();
+    var currentStage = nxt ? stageOf(nxt) : null;
+
+    var stageEl = $(".js-course-stage");
+    var countEl = $(".js-course-count");
+    var nextWrap = $(".js-course-next-wrap");
+    var nextLink = $(".js-course-next");
+    var noteEl = $(".js-course-note");
+
+    if (stageEl) stageEl.textContent = currentStage ? "Stage " + currentStage : "Course complete";
+    if (countEl) countEl.textContent = done + " of " + all.length + " done";
+    if (nxt) {
+      if (nextWrap) nextWrap.hidden = false;
+      if (nextLink) {
+        nextLink.hidden = false;
+        nextLink.setAttribute("href", exerciseHref(nxt));
+        nextLink.textContent = exTitle(nxt);
+      }
+      if (noteEl) {
+        noteEl.textContent = "A few calm minutes is plenty. The next exercise is always the recommended one.";
+      }
+    } else {
+      if (nextWrap) nextWrap.hidden = true;
+      if (noteEl) {
+        noteEl.textContent = "Every stage is done. Keep the little games going, and revisit anything that gets wobbly.";
+      }
+    }
+
+    $$(".js-stage-card").forEach(function (card) {
+      var n = card.getAttribute("data-stage");
+      if (!n) return;
+      var list = stageSlugs(n);
+      if (!list.length) return;
+
+      var m = list.filter(isMastered).length;
+      var complete = m === list.length;
+      var firstOpen = null;
+      for (var i = 0; i < list.length; i++) {
+        if (!isMastered(list[i])) { firstOpen = list[i]; break; }
+      }
+
+      card.classList.toggle("is-current", currentStage === n);
+
+      var doneEl = $(".js-stage-done", card);
+      if (doneEl) {
+        doneEl.textContent = complete ? m + " of " + list.length + " done"
+          : (m === 0 ? "Not started yet" : m + " of " + list.length + " done");
+      }
+
+      var stageNextWrap = $(".js-stage-next-wrap", card);
+      var stageNext = $(".js-stage-next", card);
+      var stageNextTitle = $(".js-stage-next-title", card);
+      if (complete || !firstOpen) {
+        if (stageNextWrap) stageNextWrap.hidden = true;
+      } else {
+        if (stageNextWrap) stageNextWrap.hidden = false;
+        if (stageNext) stageNext.setAttribute("href", exerciseHref(firstOpen));
+        if (stageNextTitle) stageNextTitle.textContent = exTitle(firstOpen);
+      }
+    });
+
+    var daySet = {};
+    (state.days || []).forEach(function (d) { daySet[d] = true; });
+    var practiceDays = Object.keys(daySet).length;
+    var stages = stageNumbers();
+    var completedStages = 0;
+    stages.forEach(function (n) {
+      if (stageIsComplete(n)) completedStages++;
+    });
+
+    setMilestone("first", done >= 1);
+    setMilestone("stage1", stageIsComplete("1"));
+    setMilestone("seven-days", practiceDays >= 7);
+    setMilestone("halfway", done >= Math.ceil(all.length / 2));
+    setMilestone("stage-complete", completedStages >= 1);
+    setMilestone("course", !!all.length && done === all.length);
+
+    $$(".js-ms-stages").forEach(function (el) {
+      el.textContent = completedStages + " of " + stages.length + " stages complete";
+    });
+  }
+
+  function setMilestone(key, earned) {
+    $$('[data-milestone="' + key + '"]').forEach(function (el) {
+      el.classList.toggle("is-earned", !!earned);
+      var stateEl = $(".milestone-state", el);
+      if (stateEl) stateEl.textContent = earned ? "Earned" : "Not yet";
+    });
   }
 
   function pillHTML(sg) {
