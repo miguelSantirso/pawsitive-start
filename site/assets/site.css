@@ -761,6 +761,17 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
 .page-head .lede { max-width: 60ch; }
 .page-head .progress-row { margin-top: 20px; max-width: 520px; }
 
+.course-stage-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+.course-stage-grid .course-stage { margin: 0; height: 100%; }
+@media (max-width: 760px) {
+  .course-stage-grid { grid-template-columns: 1fr; }
+}
+
 .course-stage {
   background: var(--surface);
   border: 1px solid var(--line);

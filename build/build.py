@@ -28,8 +28,8 @@ TOTAL = len(EXERCISES)
 # exact versioned URLs, and the service-worker precache must list the same
 # ones (caches.match is exact-match, query string included) or the offline
 # precache misses. Bump both whenever site.css / app.js change.
-CSS_V = 19
-JS_V = 17
+CSS_V = 20
+JS_V = 18
 EX_BY_SLUG = {row["ex"]["slug"]: row for row in EXERCISES}
 TAG_LABELS = {
     "calm": "Calm",
@@ -485,7 +485,7 @@ def course_body():
 </section>
 
 <div class="section-head"><h2>Your stages</h2></div>
-{''.join(cards)}
+<div class="course-stage-grid">{"".join(cards)}</div>
 
 <section class="milestones" aria-labelledby="milestones-h">
 <div class="section-head"><h2 id="milestones-h">Milestones</h2></div>
