@@ -28,8 +28,8 @@ TOTAL = len(EXERCISES)
 # exact versioned URLs, and the service-worker precache must list the same
 # ones (caches.match is exact-match, query string included) or the offline
 # precache misses. Bump both whenever site.css / app.js change.
-CSS_V = 27
-JS_V = 25
+CSS_V = 28
+JS_V = 26
 EX_BY_SLUG = {row["ex"]["slug"]: row for row in EXERCISES}
 TAG_LABELS = {
     "calm": "Calm",
@@ -432,16 +432,15 @@ def course_body():
 </article>'''
 
     groups = [
-        ("Settling in", "The first days and weeks at home.", [1, 2]),
-        ("Learning the basics", "Everyday skills as your dog starts to feel comfortable.", [3, 4]),
-        ("Feeling at home", "Building confidence for the long run.", [5, 6]),
+        ("Settling in during the first days and weeks", [1, 2]),
+        ("Learning everyday skills together", [3, 4]),
+        ("Building confidence and feeling at home", [5, 6]),
     ]
     group_sections = []
-    for title, note, nums in groups:
+    for title, nums in groups:
         cards = "".join(card_by_num[n] for n in nums)
         group_sections.append(f'''<section class="course-group" aria-labelledby="group-{nums[0]}-h">
 <div class="section-head"><h2 id="group-{nums[0]}-h">{esc(title)}</h2></div>
-<p class="section-note">{esc(note)}</p>
 <div class="course-stage-grid">{cards}</div>
 </section>''')
 
