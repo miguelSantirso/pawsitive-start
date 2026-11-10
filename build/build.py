@@ -171,8 +171,8 @@ def shell(title, desc, P, body, page, colorclass="", subbar=False,
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="{BRAND}">
 <link rel="preload" as="font" type="font/woff2" href="{P}assets/fonts/fraunces.woff2" crossorigin>
-<link rel="stylesheet" href="{P}assets/site.css?v=8">
-<script src="{P}assets/app.js?v=6" data-root="{P}" defer></script>
+<link rel="stylesheet" href="{P}assets/site.css?v=9">
+<script src="{P}assets/app.js?v=7" data-root="{P}" defer></script>
 {manifest_script()}
 {extra_head}
 </head>
@@ -625,6 +625,7 @@ def exercise_body(row):
 <div class="master-panel">
 <h2>Practised this one?</h2>
 <p>Mastered means the checks above passed in a normal session, on a normal day. You can undo it at any time.</p>
+<div class="stage-complete js-stage-complete" role="status" hidden>Stage {n} complete — a great stopping point.</div>
 <button type="button" class="btn btn-primary js-master">Mark as mastered</button>
 <button type="button" class="btn btn-ghost js-keepgoing">Not quite yet</button>
 </div>

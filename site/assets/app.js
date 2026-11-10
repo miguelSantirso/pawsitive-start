@@ -4,7 +4,7 @@
    Every page includes <script>window.PS = {...manifest}</script>:
      PS.slugs  : [slug, ...] in curriculum order
      PS.stages : { "1": {n, e, w}, ... }
-     PS.ex     : { slug: { t, g, st, s, cr, tm } }
+     PS.ex     : { slug: { t, g, st, s, cr } }
    Exercise pages: <body data-page="exercise" data-slug="...">
    ============================================================ */
 (function () {
@@ -96,6 +96,24 @@
   }
   function isMastered(sg) { return !!(state.ex[sg] && state.ex[sg].m); }
   function countTrue(arr) { var n = 0; for (var i = 0; i < arr.length; i++) if (arr[i]) n++; return n; }
+  /* True only when real progress exists: savedAt is written by every save
+     (including reset), and info() creates empty per-exercise records in
+     memory, so neither can be used on its own. */
+  function hasProgress() {
+    var key, inf, notes;
+    for (key in state.ex) {
+      if (!Object.prototype.hasOwnProperty.call(state.ex, key)) continue;
+      inf = state.ex[key] || {};
+      if (inf.m) return true;
+      if (inf.s && countTrue(inf.s) > 0) return true;
+      if (inf.c && countTrue(inf.c) > 0) return true;
+    }
+    notes = state.notes || {};
+    for (key in notes) {
+      if (Object.prototype.hasOwnProperty.call(notes, key) && notes[key] && String(notes[key]).trim()) return true;
+    }
+    return !!(state.days && state.days.length);
+  }
   function stepsMeta(sg) { var m = exMeta(sg); return { s: (m && m.s) || 0, cr: (m && m.cr) || 0 }; }
   function announce(msg) { $$(".js-announcer").forEach(function (el) { el.textContent = msg; }); }
 
@@ -138,17 +156,27 @@
     if (!n) return;
     var all = stageSlugs(n);
     if (!all.length || !all.every(isMastered)) return;
-    var meta = (window.PS && PS.stages && PS.stages[n]) || { n: "this stage" };
-    showToast("Stage complete: " + meta.n + ".");
-    announce("Stage complete: " + meta.n + ".");
+    /* Stage completion lives in the master-panel banner, not the single-slot
+       toast, so the mastery acknowledgement is not overwritten. */
+    announce("Stage " + n + " complete — a great stopping point.");
   }
 
   /* ---------- progress math ---------- */
-  function firstUnmastered() {
+  /* First unmastered exercise in curriculum order. With fromSlug, search from
+     that position forward only, then fall back to the top so a mid-course
+     user still reaches the earliest unmastered exercise. */
+  function nextUp(fromSlug) {
     var all = slugs();
-    for (var i = 0; i < all.length; i++) if (!isMastered(all[i])) return all[i];
+    var start = 0, i;
+    if (fromSlug) {
+      var at = all.indexOf(fromSlug);
+      if (at !== -1) start = at;
+    }
+    for (i = start; i < all.length; i++) if (!isMastered(all[i])) return all[i];
+    for (i = 0; i < start; i++) if (!isMastered(all[i])) return all[i];
     return null;
   }
+  function firstUnmastered() { return nextUp(); }
   function daysInLast7() {
     var t = today(), n = 0;
     for (var i = 0; i < 7; i++) if (state.days.indexOf(shiftDay(t, -i)) !== -1) n++;
@@ -279,7 +307,7 @@
     var href = (card.getAttribute("data-href") || "exercises/") + sg + ".html";
     card.classList.remove("is-done");
     if (kick) kick.textContent = "Today's focus";
-    if (metaEl) metaEl.textContent = "Stage " + (m.st || "") + " · " + (m.tm || stage.n || "");
+    if (metaEl) metaEl.textContent = "Stage " + (m.st || "") + " · " + (stage.n || "");
     if (title) title.textContent = m.t || sg;
     if (text) text.textContent = m.g || "";
     if (link) link.setAttribute("href", href);
@@ -353,6 +381,13 @@
           btn.className = "btn btn-primary js-master";
         }
       }
+    }
+
+    var stageBanner = $(".js-stage-complete");
+    if (stageBanner) {
+      var stageNum = stageOf(sg);
+      var stageList = stageNum ? stageSlugs(stageNum) : [];
+      stageBanner.hidden = !(stageList.length && stageList.every(isMastered));
     }
 
     var ta = $(".js-notes");

@@ -714,6 +714,17 @@ main.shell.narrow { max-width: 760px; }
   font-size: 0.92rem;
 }
 .stage-banner.show { display: block; }
+/* Stage completion inside the exercise master panel (Round 6). */
+.stage-complete {
+  margin: 14px 0 4px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--ok) 30%, var(--line));
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ok);
+  font-weight: 650;
+  font-size: 0.9rem;
+}
 
 .exercise-list-card {
   background: var(--surface);
