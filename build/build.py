@@ -28,8 +28,8 @@ TOTAL = len(EXERCISES)
 # exact versioned URLs, and the service-worker precache must list the same
 # ones (caches.match is exact-match, query string included) or the offline
 # precache misses. Bump both whenever site.css / app.js change.
-CSS_V = 18
-JS_V = 16
+CSS_V = 19
+JS_V = 17
 EX_BY_SLUG = {row["ex"]["slug"]: row for row in EXERCISES}
 TAG_LABELS = {
     "calm": "Calm",
@@ -394,7 +394,6 @@ def home_body():
 </div>
 
 <div class="section-head"><h2>Your course</h2><a href="course.html">View all stages →</a></div>
-<p class="section-note">Stages build on each other — the order helps most, and starting the next while you finish the last is normal. Every stage and exercise stays open.</p>
 <ol class="stage-list">
 {stage_rows("")}
 </ol>
@@ -469,31 +468,27 @@ def course_body():
 <section class="page-head course-head">
 <span class="kicker">The full course</span>
 <h1>Six stages, one calm dog.</h1>
-<p class="lede">Start with decompression, then build the everyday skills that keep a rescue dog safe, confident and at home. Stages build on each other — the order helps most, and starting the next while you finish the last is normal.</p>
+<p class="lede">Start with decompression, then build the everyday skills that keep a rescue dog safe, confident and at home.</p>
 <div class="course-here" id="overview">
 <div class="ring" data-progress="all"><span class="hole"></span><span class="ring-num js-ring-num">0%</span></div>
 <div class="here-copy">
-<p class="here-kicker">You are here</p>
 <p class="here-line"><span class="js-course-stage">Stage 1</span><span aria-hidden="true"> · </span><span class="js-course-count">0 of {TOTAL} done</span><span class="js-course-next-wrap"><span aria-hidden="true"> · </span>next up: <a class="js-course-next" href="{first_href}">{esc(first_row["ex"]["title"])}</a></span></p>
-<p class="here-note js-course-note">A few calm minutes is plenty. The next exercise is always the recommended one.</p>
 </div>
 </div>
 </section>
 
 <section class="course-timeline" aria-labelledby="timeline-h">
 <div class="section-head"><h2 id="timeline-h">How the stages overlap</h2></div>
-<p class="section-note">Typical windows, not deadlines. Stages build on each other — starting the next while you finish the last is normal.</p>
+<p class="section-note">Typical windows, not deadlines. Stages often overlap.</p>
 <ol class="timeline-list">{"".join(timeline)}</ol>
 <div class="timeline-axis" aria-hidden="true"><span></span><span class="timeline-axis-track"><span>Day 1</span><span>~3 months</span><span>~6 months</span></span></div>
 </section>
 
 <div class="section-head"><h2>Your stages</h2></div>
-<p class="section-note">Every stage is open. The “You are here” mark follows the next exercise in the course.</p>
 {''.join(cards)}
 
 <section class="milestones" aria-labelledby="milestones-h">
 <div class="section-head"><h2 id="milestones-h">Milestones</h2></div>
-<p class="section-note">A few moments worth noticing. They update as you go, and undo quietly if you change your mind.</p>
 <ul class="milestone-list">
 <li class="milestone" data-milestone="first"><span class="milestone-icon" aria-hidden="true"></span><span class="milestone-copy"><span class="milestone-title">First exercise mastered</span><span class="milestone-sub">The first small win — and the hardest part is starting.</span></span><span class="milestone-state">Not yet</span></li>
 <li class="milestone" data-milestone="stage1"><span class="milestone-icon" aria-hidden="true"></span><span class="milestone-copy"><span class="milestone-title">Stage 1 complete — decompression done</span><span class="milestone-sub">Safety, sleep and routine are in place.</span></span><span class="milestone-state">Not yet</span></li>
@@ -726,7 +721,6 @@ def stage_body(s):
 
 <section class="exercise-list-card">
 <div class="section-head"><h2>Exercises</h2><span class="small">{len(s["exercises"])} in this stage</span></div>
-<p class="section-note">Stages build on each other — the order helps most, and starting the next while you finish the last is normal. Jumping around is fine: core exercises are the essentials, and supporting ones can wait.</p>
 <ol class="ex-list">{''.join(rows)}</ol>
 </section>
 

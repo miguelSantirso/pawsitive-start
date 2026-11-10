@@ -347,7 +347,6 @@
     var countEl = $(".js-course-count");
     var nextWrap = $(".js-course-next-wrap");
     var nextLink = $(".js-course-next");
-    var noteEl = $(".js-course-note");
 
     if (stageEl) stageEl.textContent = currentStage ? "Stage " + currentStage : "Course complete";
     if (countEl) countEl.textContent = done + " of " + all.length + " done";
@@ -358,14 +357,8 @@
         nextLink.setAttribute("href", exerciseHref(nxt));
         nextLink.textContent = exTitle(nxt);
       }
-      if (noteEl) {
-        noteEl.textContent = "A few calm minutes is plenty. The next exercise is always the recommended one.";
-      }
     } else {
       if (nextWrap) nextWrap.hidden = true;
-      if (noteEl) {
-        noteEl.textContent = "Every stage is done. Keep the little games going, and revisit anything that gets wobbly.";
-      }
     }
 
     $$(".js-stage-card").forEach(function (card) {
