@@ -542,8 +542,12 @@
       var h = document.createElement("span");
       h.className = "focus-chip-hint";
       h.textContent = "Good when your dog " + (TAG_HINTS[mm.f] || "is ready for something different");
+      var action = document.createElement("span");
+      action.className = "focus-chip-action";
+      action.innerHTML = '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4.5 3.5l8 4.5-8 4.5z" fill="currentColor"/></svg><span>Start</span>';
       a.appendChild(t);
       a.appendChild(h);
+      a.appendChild(action);
       chips.appendChild(a);
     });
     alt.hidden = false;

@@ -598,6 +598,24 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
 }
 .focus-chip-title { font-size: 0.84rem; font-weight: 650; line-height: 1.3; }
 .focus-chip-hint { font-size: 0.76rem; font-weight: 500; color: var(--muted); line-height: 1.3; }
+.focus-chip-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-bold) 12%, var(--surface));
+  color: var(--accent-ink, var(--accent-bold));
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.focus-chip-action .ico { width: 0.85em; height: 0.85em; }
+.focus-chip:hover .focus-chip-action,
+.focus-chip:focus-visible .focus-chip-action {
+  background: color-mix(in srgb, var(--accent-bold) 18%, var(--surface));
+}
 @media (max-width: 420px) { .focus-chip { flex-basis: 100%; } }
 
 /* Round 6 / WP4 — soft self-placement prompt. Inline, skippable, never a
