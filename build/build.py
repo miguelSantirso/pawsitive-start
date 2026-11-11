@@ -28,8 +28,8 @@ TOTAL = len(EXERCISES)
 # exact versioned URLs, and the service-worker precache must list the same
 # ones (caches.match is exact-match, query string included) or the offline
 # precache misses. Bump both whenever site.css / app.js change.
-CSS_V = 36
-JS_V = 34
+CSS_V = 37
+JS_V = 35
 EX_BY_SLUG = {row["ex"]["slug"]: row for row in EXERCISES}
 TAG_LABELS = {
     "calm": "Calm",
@@ -66,11 +66,11 @@ def esc(s):
 # ---------------------------------------------------------------- icons
 ICONS = {
     "paw": (
-        '<path d="M12 21c-3.3 0-5.8-1.9-5.8-4.6 0-2.1 1.7-3.4 3.3-4.1'
-        '.9-.4 1.7-.8 2.5-.8s1.6.4 2.5.8c1.6.7 3.3 2 3.3 4.1'
-        ' 0 2.7-2.5 4.6-5.8 4.6Z"/>'
-        '<circle cx="6.2" cy="9.4" r="2.1"/><circle cx="10" cy="6.4" r="2.2"/>'
-        '<circle cx="14" cy="6.4" r="2.2"/><circle cx="17.8" cy="9.4" r="2.1"/>'
+        '<ellipse cx="12" cy="15.8" rx="5.2" ry="4.1"/>'
+        '<ellipse cx="6.4" cy="10.6" rx="2.15" ry="2.45" transform="rotate(-18 6.4 10.6)"/>'
+        '<ellipse cx="9.8" cy="7.8" rx="2.05" ry="2.35" transform="rotate(-8 9.8 7.8)"/>'
+        '<ellipse cx="14.2" cy="7.8" rx="2.05" ry="2.35" transform="rotate(8 14.2 7.8)"/>'
+        '<ellipse cx="17.6" cy="10.6" rx="2.15" ry="2.45" transform="rotate(18 17.6 10.6)"/>'
     ),
     "today": (
         '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4'
@@ -149,7 +149,7 @@ def tip_banner(P=""):
     payload = json.dumps(data_rules.TIPS, ensure_ascii=False).replace("</", "<\\/")
     return f'''<div class="tip-banner js-tip-banner" hidden>
 <div class="tip-banner-inner">
-<div class="callout tip tip-card js-tip">
+<div class="tip-card js-tip">
 <div class="tip-banner-body">
 <h3 id="tip-h">Try this today</h3>
 <p class="tip-text js-tip-text"></p>
@@ -212,7 +212,7 @@ def topbar(P, page, subbar=False, stage=None):
     score = f'<a class="score js-score" href="{P}course.html#overview">0/{TOTAL} mastered</a>'
     if page == "exercise":
         return f'''<header class="topbar topbar-focus"><div class="topbar-inner">
-<a class="backlink" href="{P}stage-{stage}.html">{svg("arrow-left")}<span>Stage {stage}</span></a>
+<a class="backlink backlink-icon" href="{P}stage-{stage}.html" aria-label="Back to stage">{svg("arrow-left")}</a>
 {score}
 </div>{SUBBAR if subbar else ""}</header>'''
     return f'''<header class="topbar"><div class="topbar-inner">
@@ -404,7 +404,7 @@ def course_body():
         first = s["exercises"][0]
         card_by_num[n] = f'''<article class="course-stage s{n} js-stage-card" data-stage="{n}">
 <div class="course-stage-head">
-<div class="course-stage-copy"><span class="stage-index">{n:02d}</span><h2><a href="stage-{n}.html">{esc(s["name"])}</a></h2><span class="stage-meta">{esc(s["when"])}</span><span class="stage-now">You are here</span></div>
+<div class="course-stage-copy"><span class="stage-index">{n:02d}</span><h2><a href="stage-{n}.html">{esc(s["name"])}</a></h2><span class="stage-meta-row"><span class="stage-meta">{esc(s["when"])}</span><span class="stage-now">You are here</span></span></div>
 <span class="badge-done">Complete</span>
 </div>
 <p class="stage-purpose">{esc(s["purpose"])}</p>
@@ -631,14 +631,10 @@ def stage_body(s):
     n = s["num"]
     rows = []
     for k, e in enumerate(s["exercises"], 1):
-        tags_html = "".join(f'<span class="ex-tag">{esc(tag_label(t))}</span>' for t in e["tags"])
-        supporting_html = "" if e.get("core", True) else '<span class="ex-flag">Supporting</span>'
-        advice = seq_advice(e)
-        seq_html = f'<span class="ex-seq">{esc(advice)}</span>' if advice else ""
         rows.append(f'''<li class="ex-row" data-ex="{esc(e["slug"])}">
 <a class="ex-row-link" href="exercises/{esc(e["slug"])}.html">
 <span class="ex-num">{k:02d}</span>
-<span class="grow"><span class="ex-title">{esc(e["title"])}</span><span class="ex-sub">{esc(e["time"])}</span><span class="ex-tags">{tags_html}{supporting_html}</span>{seq_html}</span>
+<span class="grow"><span class="ex-title">{esc(e["title"])}</span><span class="ex-sub">{esc(e["time"])}</span></span>
 <span class="status-slot"></span>
 <span class="chevron">{svg("chevron-right")}</span>
 </a>
@@ -678,7 +674,7 @@ def stage_body(s):
 {essentials_html}
 
 <section class="exercise-list-card">
-<div class="section-head"><h2>Exercises</h2><span class="small">{len(s["exercises"])} in this stage</span></div>
+<div class="section-head"><h2>Exercises</h2></div>
 <ol class="ex-list">{''.join(rows)}</ol>
 </section>
 
@@ -740,47 +736,30 @@ def exercise_body(row):
     ).replace("</", "<\\/")
 
     body = f'''
-<div class="crumbs"><a href="../index.html">Today</a><span>·</span><a href="../stage-{n}.html">Stage {n} · {esc(s["name"])}</a></div>
 <section class="exercise-head s{n}">
-<span class="kicker">Stage {n} · {esc(s["name"])}</span>
 <h1>{esc(e["title"])}</h1>
-<div class="exercise-meta"><span>{esc(e["time"])}</span><span>{len(e["steps"])} steps</span><span class="js-stepcount">0 of {len(e["steps"])} steps done</span></div>
+<div class="exercise-meta"><span>{esc(e["time"])}</span></div>
 </section>
 
-<div class="goal"><span class="goal-label">The goal</span>{esc(e["goal"])}</div>
+<div class="goal"><span class="goal-label">The goal</span><p class="goal-text">{esc(e["goal"])}</p><details class="goal-why"><summary>Why this matters</summary><p>{esc(e["why"])}</p></details><details class="goal-why goal-need"><summary>What you need</summary><ul class="needrow">{need_items}</ul></details></div>
 
-{seq_callout}<div class="exercise-actions">
-<button type="button" class="btn btn-primary js-session-start">{svg("play")} Start guided session</button>
-<a class="btn btn-quiet" href="#steps">See all steps</a>
-</div>
-
-<details class="why-block">
-<summary>{svg("info")} Why this matters</summary>
-<p>{esc(e["why"])}</p>
-</details>
-
-<section class="exercise-section">
-<h2>What you need</h2>
-<ul class="needrow">{need_items}</ul>
-</section>
-
+{seq_callout}
 <section class="exercise-section" id="steps">
-<h2>Steps</h2>
-<p class="section-note">Tick each step as you go. The bar at the top fills in.</p>
+<div class="section-head steps-head"><h2>Steps</h2><button type="button" class="btn btn-primary js-session-start">{svg("play")} Start guided session</button></div>
 <ol class="steps">{steps}</ol>
+<div class="mistakes-block">
+<h3>Common mistakes</h3>
+<ul>{mistakes}</ul>
+</div>
 </section>
 
 <section class="exercise-section">
 <h2>Mastery check</h2>
-<p class="section-note">You have got this when all of these are true in a normal session, on a normal day.</p>
+<p class="section-note">These should be true in a normal session, on a normal day.</p>
 <ol class="steps crit">{crits}</ol>
 {timer}
+<div class="mastery-jump"><button type="button" class="btn btn-primary js-mastery-jump" hidden>Mark as mastered</button></div>
 </section>
-
-<div class="callout warn">
-<h3>Common mistakes</h3>
-<ul>{mistakes}</ul>
-</div>
 
 <section class="exercise-section">
 <h2>If your dog is struggling</h2>

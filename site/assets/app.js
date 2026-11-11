@@ -641,6 +641,10 @@
       el.textContent = isMastered(sg) ? "Mastered" : sDone + " of " + meta.s + " steps done";
     });
 
+    $$(".js-mastery-jump").forEach(function (btn) {
+      btn.hidden = !(meta.cr > 0 && cDone === meta.cr);
+    });
+
     var pct = Math.round(((sDone + cDone) / Math.max(meta.s + meta.cr, 1)) * 100);
     $$(".js-subfill").forEach(function (f) {
       var track = f.closest(".subbar-track");
@@ -1102,6 +1106,12 @@
     $$(".js-keepgoing").forEach(function (btn) {
       btn.addEventListener("click", function () {
         showToast("No rush. A short repeat tomorrow is enough.");
+      });
+    });
+    $$(".js-mastery-jump").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var panel = $(".master-panel");
+        if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
       });
     });
 

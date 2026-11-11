@@ -294,6 +294,8 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
 }
 .backlink svg { width: 18px; height: 18px; }
 .backlink:hover { color: var(--ink); text-decoration: none; }
+.backlink-icon { padding: 0 6px; }
+.backlink-icon svg { width: 22px; height: 22px; }
 .topbar-focus .score { margin-left: auto; }
 .subbar-track {
   height: 3px; width: 100%;
@@ -802,7 +804,14 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
 .course-stage-head h2 { margin: 0; font-size: 1.25rem; }
 .course-stage-head h2 a { color: var(--ink); text-decoration: none; }
 .course-stage-head h2 a:hover { color: var(--accent-ink); text-decoration: underline; }
-.course-stage-head .stage-meta { margin-top: 3px; }
+.course-stage-head .stage-meta { margin-top: 0; }
+.stage-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+}
 .course-stage .stage-index {
   float: left;
   display: inline;
@@ -881,7 +890,7 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
 }
 .stage-now {
   display: none;
-  margin-top: 6px;
+  margin-top: 0;
   font-size: 0.62rem; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--accent-ink); background: var(--accent-soft);
@@ -1039,7 +1048,8 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
   padding: 18px 22px 10px;
   margin: 24px 0;
 }
-.exercise-list-card .section-head { margin-top: 0; }
+.exercise-list-card .section-head { margin-top: 0; margin-bottom: 0; }
+.exercise-list-card .ex-list { border-top: none; margin-top: 0; }
 
 .essentials-card {
   background: var(--sage-soft);
@@ -1079,6 +1089,32 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
   letter-spacing: 0.13em; text-transform: uppercase;
   color: var(--accent-ink); margin-bottom: 5px;
 }
+.goal-text { margin: 0; }
+.goal-why {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.goal-why > summary {
+  cursor: pointer;
+  font-weight: 650;
+  color: var(--ink-2);
+  list-style: none;
+}
+.goal-why > summary::-webkit-details-marker { display: none; }
+.goal-why > summary::after {
+  content: " +";
+  color: var(--muted);
+  font-weight: 600;
+}
+.goal-why[open] > summary::after { content: " –"; }
+.goal-why p { margin: 6px 0 0; }
+.goal-need .needrow { margin: 8px 0 0; }
+.goal-need .needrow li { background: var(--paper-2); }
 .exercise-actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0 8px; }
 .exercise-actions .btn { flex: 0 1 auto; }
 @media (max-width: 520px) {
@@ -1116,7 +1152,37 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
 
 .exercise-section { margin: 28px 0 0; }
 .exercise-section > h2 { margin: 0; }
+.exercise-section .section-head h2 { margin: 0; }
 .exercise-section .section-note { margin-top: 2px; }
+.mistakes-block { margin-top: 14px; }
+.mistakes-block h3 {
+  margin: 0 0 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.mistakes-block ul {
+  margin: 0;
+  padding-left: 1.2em;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.mistakes-block li { margin: 0.25em 0; }
+.steps-head { align-items: center; gap: 12px; margin-bottom: 0; }
+.steps-head + .steps { border-top: none; margin-top: 0; }
+.steps-head .btn {
+  margin-left: auto;
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 4px 10px;
+  font-size: 0.76rem;
+  border-radius: 9px;
+}
+.steps-head .btn svg { width: 14px; height: 14px; }
+@media (max-width: 520px) {
+  .steps-head { flex-wrap: wrap; }
+  .steps-head .btn { width: 100%; margin-left: 0; }
+}
 
 .steps { list-style: none; padding: 0; margin: 8px 0; border-top: 1px solid var(--line); }
 .steps li { border-bottom: 1px solid var(--line); }
@@ -1148,6 +1214,8 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
 
 .timer-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 14px 0 0; }
 .timer-readout { font-variant-numeric: tabular-nums; font-weight: 650; color: var(--muted); }
+.mastery-jump { margin-top: 14px; }
+.mastery-jump .btn[hidden] { display: none !important; }
 
 .callout {
   border: 1px solid var(--line);
@@ -1171,28 +1239,46 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
 .callout.info { background: var(--surface-2); }
 .callout.info h2, .callout.info h3 { color: var(--s4); }
 
-/* Tip of the day — full-width banner immediately below the app header. */
-.tip-banner { width: 100%; }
+/* Tip of the day — full-width banner attached to the header. */
+.tip-banner {
+  width: 100%;
+  margin: 0;
+  background: var(--sage-soft);
+  border-bottom: 1px solid var(--line);
+}
 .tip-banner[hidden] { display: none !important; }
 .tip-banner-inner {
-  max-width: 1040px;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 10px 20px 0;
+  padding: 8px 20px;
 }
 .tip-banner .tip-card {
   margin: 0;
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
 }
 .tip-banner-body { flex: 1; min-width: 0; }
-.tip-card .tip-text { margin: 0; max-width: 68ch; }
-.tip-link {
-  display: inline-flex; align-items: center; gap: 6px;
-  min-height: 44px; margin-top: 2px;
-  font-size: 0.82rem; font-weight: 650;
+.tip-banner h3 {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--sage);
 }
-.tip-link svg { width: 16px; height: 16px; flex: 0 0 auto; }
+.tip-card .tip-text { margin: 2px 0 0; max-width: 68ch; font-size: 0.9rem; line-height: 1.45; }
+.tip-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  min-height: 36px; margin-top: 0;
+  font-size: 0.8rem; font-weight: 650;
+}
+.tip-link svg { width: 14px; height: 14px; flex: 0 0 auto; }
 .tip-dismiss {
   flex: 0 0 auto;
   display: inline-flex;
@@ -1200,7 +1286,7 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
   justify-content: center;
   width: 36px;
   height: 36px;
-  margin: -2px -4px 0 0;
+  margin: -4px -6px 0 0;
   border: 0;
   border-radius: 8px;
   background: transparent;
@@ -1213,9 +1299,8 @@ main.shell { padding-top: 28px; padding-bottom: 72px; }
 }
 .tip-dismiss svg { width: 18px; height: 18px; }
 @media (max-width: 520px) {
-  .tip-banner-inner { padding: 8px 14px 0; }
-  .tip-banner .tip-card { padding: 14px 15px; }
-  .tip-card .tip-text { font-size: 0.88rem; }
+  .tip-banner-inner { padding: 8px 16px; }
+  .tip-card .tip-text { font-size: 0.86rem; }
 }
 
 .trouble-list { margin: 12px 0; border-top: 1px solid var(--line); }

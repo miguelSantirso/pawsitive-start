@@ -15,12 +15,12 @@ CLAY = (163, 74, 38)     # #a34a26
 PAPER = (247, 242, 233)  # #f7f2e9
 
 # Paw geometry in a 100 x 100 coordinate space.
-PAD = (50.0, 66.0, 21.0, 17.0)  # cx, cy, rx, ry
+PAD = (50.0, 67.0, 22.5, 17.5)  # cx, cy, rx, ry
 TOES = [
-    (28.0, 43.0, 9.0),
-    (42.0, 34.0, 9.5),
-    (58.0, 34.0, 9.5),
-    (72.0, 43.0, 9.0),
+    (27.5, 42.5, 9.2, 10.0),
+    (41.0, 32.5, 8.8, 9.8),
+    (59.0, 32.5, 8.8, 9.8),
+    (72.5, 42.5, 9.2, 10.0),
 ]
 
 
@@ -36,8 +36,8 @@ def paw(x, y, scale=1.0):
     y = 50.0 + (y - 50.0) / scale
     if _in_ellipse(x, y, *PAD):
         return True
-    for cx, cy, r in TOES:
-        if _in_ellipse(x, y, cx, cy, r, r):
+    for cx, cy, rx, ry in TOES:
+        if _in_ellipse(x, y, cx, cy, rx, ry):
             return True
     return False
 
@@ -81,13 +81,14 @@ def _png(size, scale):
 
 def _svg():
     toes = "".join(
-        '<circle cx="%g" cy="%g" r="%g"/>' % (cx, cy, r) for cx, cy, r in TOES
+        '<ellipse cx="%g" cy="%g" rx="%g" ry="%g"/>' % t for t in TOES
     )
     return (
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
-        '<rect width="100" height="100" rx="22" fill="#a34a26"/>'
+        '<rect width="100" height="100" rx="24" fill="#a34a26"/>'
         '<g fill="#f7f2e9">'
-        '<ellipse cx="50" cy="66" rx="21" ry="17"/>'
+        '<ellipse cx="%g" cy="%g" rx="%g" ry="%g"/>'
+        % PAD
         + toes
         + "</g></svg>\n"
     )
